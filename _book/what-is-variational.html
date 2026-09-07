@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="A step-by-step introduction to variational inference and variational free energy for undergraduate physics students.">
+
+<title>2&nbsp; What does ‘variational’ mean? – Introduction to the Free Energy Principle</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./summary.html" rel="next">
+<link href="./intro.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-d3f7f8e73c8d287b30bcf59c2b563615.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./what-is-variational.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">What does ‘variational’ mean?</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Introduction to the Free Energy Principle</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./what-is-variational.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">What does ‘variational’ mean?</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#start-with-ordinary-optimization" id="toc-start-with-ordinary-optimization" class="nav-link active" data-scroll-target="#start-with-ordinary-optimization"><span class="header-section-number">2.1</span> 1. Start with ordinary optimization</a></li>
+  <li><a href="#what-is-a-variation" id="toc-what-is-a-variation" class="nav-link" data-scroll-target="#what-is-a-variation"><span class="header-section-number">2.2</span> 2. What is a variation?</a></li>
+  <li><a href="#enter-bayesian-inference" id="toc-enter-bayesian-inference" class="nav-link" data-scroll-target="#enter-bayesian-inference"><span class="header-section-number">2.3</span> 3. Enter Bayesian inference</a></li>
+  <li><a href="#introduce-an-adjustable-candidate-distribution" id="toc-introduce-an-adjustable-candidate-distribution" class="nav-link" data-scroll-target="#introduce-an-adjustable-candidate-distribution"><span class="header-section-number">2.4</span> 4. Introduce an adjustable candidate distribution</a></li>
+  <li><a href="#what-exactly-is-being-varied" id="toc-what-exactly-is-being-varied" class="nav-link" data-scroll-target="#what-exactly-is-being-varied"><span class="header-section-number">2.5</span> 5. What exactly is being varied?</a></li>
+  <li><a href="#in-practice-choose-a-family-of-distributions" id="toc-in-practice-choose-a-family-of-distributions" class="nav-link" data-scroll-target="#in-practice-choose-a-family-of-distributions"><span class="header-section-number">2.6</span> 6. In practice, choose a family of distributions</a></li>
+  <li><a href="#connect-the-parameters-to-internal-states" id="toc-connect-the-parameters-to-internal-states" class="nav-link" data-scroll-target="#connect-the-parameters-to-internal-states"><span class="header-section-number">2.7</span> 7. Connect the parameters to internal states</a></li>
+  <li><a href="#give-the-candidate-a-score-kl-divergence" id="toc-give-the-candidate-a-score-kl-divergence" class="nav-link" data-scroll-target="#give-the-candidate-a-score-kl-divergence"><span class="header-section-number">2.8</span> 8. Give the candidate a score: KL divergence</a></li>
+  <li><a href="#remove-the-difficult-posterior-normalization" id="toc-remove-the-difficult-posterior-normalization" class="nav-link" data-scroll-target="#remove-the-difficult-posterior-normalization"><span class="header-section-number">2.9</span> 9. Remove the difficult posterior normalization</a></li>
+  <li><a href="#understand-the-key-identity" id="toc-understand-the-key-identity" class="nav-link" data-scroll-target="#understand-the-key-identity"><span class="header-section-number">2.10</span> 10. Understand the key identity</a></li>
+  <li><a href="#why-call-it-free-energy" id="toc-why-call-it-free-energy" class="nav-link" data-scroll-target="#why-call-it-free-energy"><span class="header-section-number">2.11</span> 11. Why call it “free energy”?</a></li>
+  <li><a href="#why-specifically-variational-free-energy" id="toc-why-specifically-variational-free-energy" class="nav-link" data-scroll-target="#why-specifically-variational-free-energy"><span class="header-section-number">2.12</span> 12. Why specifically <em>variational</em> free energy?</a></li>
+  <li><a href="#work-through-the-thermometer-numerically" id="toc-work-through-the-thermometer-numerically" class="nav-link" data-scroll-target="#work-through-the-thermometer-numerically"><span class="header-section-number">2.13</span> 13. Work through the thermometer numerically</a></li>
+  <li><a href="#make-the-word-variation-tangible" id="toc-make-the-word-variation-tangible" class="nav-link" data-scroll-target="#make-the-word-variation-tangible"><span class="header-section-number">2.14</span> 14. Make the word “variation” tangible</a></li>
+  <li><a href="#return-to-the-free-energy-principle" id="toc-return-to-the-free-energy-principle" class="nav-link" data-scroll-target="#return-to-the-free-energy-principle"><span class="header-section-number">2.15</span> 15. Return to the Free Energy Principle</a></li>
+  <li><a href="#keep-three-different-objects-separate" id="toc-keep-three-different-objects-separate" class="nav-link" data-scroll-target="#keep-three-different-objects-separate"><span class="header-section-number">2.16</span> 16. Keep three different objects separate</a></li>
+  <li><a href="#check-your-understanding" id="toc-check-your-understanding" class="nav-link" data-scroll-target="#check-your-understanding">Check your understanding</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further reading</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">What does ‘variational’ mean?</span></h1>
+<p class="subtitle lead">From varying a trajectory to varying a probability distribution</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The question guiding this chapter
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In mechanics, we can vary a <em>trajectory</em> and ask which trajectory makes an action stationary. In variational inference, we vary a <em>probability distribution</em> and ask which distribution minimizes an objective.</p>
+<p><strong>“Variational” identifies what we are doing: optimizing over functions, here probability densities. It does not mean “variance.”</strong></p>
+</div>
+</div>
+<p>This chapter assumes familiarity with derivatives, integrals, Gaussian distributions, and the basic idea of conditional probability. No previous knowledge of functional derivatives is required. The optional derivation near the end introduces them when they become useful.</p>
+<p>We will move through sixteen small steps. Our running example is a noisy thermometer connected to a controller: the sensor reports a temperature, while the actual room temperature remains uncertain. We first study inference with the observation held fixed; controlling the heater comes later.</p>
+<p>By the end, you should be able to explain what is varied, derive the free-energy identity, and distinguish an external state from a distribution over that state.</p>
+<section id="start-with-ordinary-optimization" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="start-with-ordinary-optimization"><span class="header-section-number">2.1</span> 1. Start with ordinary optimization</h2>
+<p>Suppose we want to minimize</p>
+<p><span class="math display">\[
+f(x)=(x-3)^2.
+\]</span></p>
+<p>We vary the number <span class="math inline">\(x\)</span>. Differentiating gives</p>
+<p><span class="math display">\[
+f'(x)=2(x-3)=0
+\quad\Longrightarrow\quad x^*=3.
+\]</span></p>
+<p>Because <span class="math inline">\(f''(x)=2&gt;0\)</span>, this stationary point is a minimum. We write</p>
+<p><span class="math display">\[
+x^*=\arg\min_x f(x).
+\]</span></p>
+<p>The notation <span class="math inline">\(\arg\min\)</span> asks for the <em>input</em> that minimizes a quantity. Here the minimizing input is <span class="math inline">\(3\)</span>, whereas the minimum value of the function is <span class="math inline">\(f(3)=0\)</span>.</p>
+<p>Now change the question. Instead of choosing one number, suppose we must choose a whole curve joining two fixed points. Which curve is shortest?</p>
+<p>For a curve written as <span class="math inline">\(y(x)\)</span> between <span class="math inline">\(x=a\)</span> and <span class="math inline">\(x=b\)</span>, its length is</p>
+<p><span class="math display">\[
+L[y]=\int_a^b \sqrt{1+[y'(x)]^2}\,dx.
+\]</span></p>
+<p>Each candidate curve has one length. Thus <span class="math inline">\(L\)</span> takes a <strong>function</strong> as input and returns a <strong>number</strong>. Such an object is called a <em>functional</em>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Problem</th>
+<th>Adjustable object</th>
+<th>Objective</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Ordinary optimization</td>
+<td>A number <span class="math inline">\(x\)</span></td>
+<td>A function <span class="math inline">\(f(x)\)</span></td>
+</tr>
+<tr class="even">
+<td>Shortest-curve problem</td>
+<td>A whole curve <span class="math inline">\(y(x)\)</span></td>
+<td>A functional <span class="math inline">\(L[y]\)</span></td>
+</tr>
+<tr class="odd">
+<td>Variational inference</td>
+<td>A probability density <span class="math inline">\(q(\eta)\)</span></td>
+<td>A functional <span class="math inline">\(F[q]\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Square brackets help signal that the input is an entire function. They are a notational convention, not a new mathematical operation.</p>
+</section>
+<section id="what-is-a-variation" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="what-is-a-variation"><span class="header-section-number">2.2</span> 2. What is a variation?</h2>
+<p>Take a candidate curve <span class="math inline">\(y(x)\)</span> and deform it slightly:</p>
+<p><span class="math display">\[
+y_\epsilon(x)=y(x)+\epsilon h(x).
+\]</span></p>
+<p>Here <span class="math inline">\(h(x)\)</span> describes the <em>shape</em> of the deformation, and the small number <span class="math inline">\(\epsilon\)</span> controls its size. To preserve the endpoints, require <span class="math inline">\(h(a)=h(b)=0\)</span>.</p>
+<p>For each deformation shape, we ask how the length changes:</p>
+<p><span class="math display">\[
+\left.\frac{d}{d\epsilon}L[y+\epsilon h]\right|_{\epsilon=0}.
+\]</span></p>
+<p>This is the <strong>first variation</strong> in the direction <span class="math inline">\(h\)</span>. At a smooth unconstrained minimum, it vanishes for every admissible direction: there is no first-order improvement available.</p>
+<p>The same idea appears in classical mechanics:</p>
+<p><span class="math display">\[
+S[x]=\int_{t_0}^{t_1}\mathcal L(x,\dot x,t)\,dt,
+\qquad \delta S=0.
+\]</span></p>
+<p>The Euler–Lagrange equations follow by requiring stationarity under small changes of the path with fixed endpoints. This calculus of variations is the mathematical origin of the terminology we are learning.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Stationary does not always mean minimum
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The condition <span class="math inline">\(\delta S=0\)</span> means the first variation vanishes. A stationary action need not be a minimum; it can be a saddle. We will establish a minimum for variational free energy using the non-negativity of KL divergence.</p>
+</div>
+</div>
+</section>
+<section id="enter-bayesian-inference" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="enter-bayesian-inference"><span class="header-section-number">2.3</span> 3. Enter Bayesian inference</h2>
+<p>Our thermometer displays</p>
+<p><span class="math display">\[
+s=17^\circ\mathrm C.
+\]</span></p>
+<p>The true temperature <span class="math inline">\(\eta\)</span> is hidden. Because the measurement is noisy, the observation does not imply <span class="math inline">\(\eta=17^\circ\mathrm C\)</span> exactly.</p>
+<p>A <strong>generative model</strong> specifies how hidden states and observations are related:</p>
+<p><span class="math display">\[
+p(s,\eta)=p(s\mid\eta)p(\eta).
+\]</span></p>
+<p>The prior <span class="math inline">\(p(\eta)\)</span> describes temperature uncertainty before incorporating this reading. The likelihood <span class="math inline">\(p(s\mid\eta)\)</span> describes the sensor: if the room had temperature <span class="math inline">\(\eta\)</span>, how probable would different readings be?</p>
+<p>Bayes’ rule gives the posterior:</p>
+<p><span class="math display">\[
+p(\eta\mid s)=\frac{p(s,\eta)}{p(s)},
+\qquad
+p(s)=\int p(s,\eta)\,d\eta.
+\]</span></p>
+<p>The denominator is called the <strong>model evidence</strong> or <strong>marginal likelihood</strong>. It normalizes the posterior so that its integral over <span class="math inline">\(\eta\)</span> equals one.</p>
+<p>For one Gaussian temperature variable, this integral is easy. For many interacting hidden variables in a nonlinear model, it can become prohibitively difficult. Our simple thermometer will let us learn the method in a setting where we can check the answer exactly.</p>
+</section>
+<section id="introduce-an-adjustable-candidate-distribution" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="introduce-an-adjustable-candidate-distribution"><span class="header-section-number">2.4</span> 4. Introduce an adjustable candidate distribution</h2>
+<p>Rather than directly calculating the posterior, introduce a candidate density</p>
+<p><span class="math display">\[
+q(\eta).
+\]</span></p>
+<p>We adjust it to approximate <span class="math inline">\(p(\eta\mid s)\)</span>. This candidate is the <strong>variational density</strong>.</p>
+<p>Think of <span class="math inline">\(q\)</span> as a flexible probability curve. We can move its peak, change its width, or—if our chosen family permits—change its shape more substantially.</p>
+<p>Unlike an arbitrary curve, a probability density must obey</p>
+<p><span class="math display">\[
+q(\eta)\geq 0,
+\qquad
+\int q(\eta)\,d\eta=1.
+\]</span></p>
+<p>A small variation therefore has the form</p>
+<p><span class="math display">\[
+q_\epsilon(\eta)=q(\eta)+\epsilon h(\eta),
+\qquad \int h(\eta)\,d\eta=0,
+\]</span></p>
+<p>with <span class="math inline">\(\epsilon\)</span> and <span class="math inline">\(h\)</span> also chosen to preserve non-negativity. We can redistribute probability, but we cannot create or destroy its total mass.</p>
+</section>
+<section id="what-exactly-is-being-varied" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="what-exactly-is-being-varied"><span class="header-section-number">2.5</span> 5. What exactly is being varied?</h2>
+<p>The distinction is subtle but essential:</p>
+<p><span class="math display">\[
+\underbrace{\eta}_{\text{possible temperature}}
+\qquad\text{versus}\qquad
+\underbrace{q(\eta)}_{\text{density over possible temperatures}}.
+\]</span></p>
+<p>When we integrate over <span class="math inline">\(\eta\)</span>, we scan the possible temperatures within <em>one</em> distribution. When we vary <span class="math inline">\(q\)</span>, we change how probability is allocated across those temperatures.</p>
+<p>For example, changing from a broad distribution near <span class="math inline">\(22^\circ\mathrm C\)</span> to a narrow distribution near <span class="math inline">\(18^\circ\mathrm C\)</span> changes both an estimate and its uncertainty. It does not itself cool the room.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Pause and check
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If the room stays at the same temperature while the controller becomes more certain about it, what changes?</p>
+<p>The physical temperature <span class="math inline">\(\eta\)</span> can stay fixed while the density <span class="math inline">\(q(\eta)\)</span> becomes narrower. Inference changes a representation of the world.</p>
+</div>
+</div>
+</section>
+<section id="in-practice-choose-a-family-of-distributions" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="in-practice-choose-a-family-of-distributions"><span class="header-section-number">2.6</span> 6. In practice, choose a family of distributions</h2>
+<p>Optimizing over every conceivable density is usually impractical. Instead, choose a family <span class="math inline">\(\mathcal Q\)</span>.</p>
+<p>For example,</p>
+<p><span class="math display">\[
+q_\theta(\eta)=\mathcal N(\eta;m,v),
+\qquad \theta=(m,v),\quad v&gt;0.
+\]</span></p>
+<p>We use <span class="math inline">\(m\)</span> for the mean and <span class="math inline">\(v\)</span> for the <strong>variance</strong>, so the standard deviation is <span class="math inline">\(\sqrt v\)</span>. Each pair <span class="math inline">\((m,v)\)</span> specifies an entire Gaussian density.</p>
+<p>Changing <span class="math inline">\(m\)</span> slides the curve. Changing <span class="math inline">\(v\)</span> changes its width. A computer can therefore optimize a two-dimensional parameter vector rather than an unrestricted function.</p>
+<p><span class="math display">\[
+\min_{q\in\mathcal Q}F[q]
+\quad\longleftrightarrow\quad
+\min_{m,\,v&gt;0}F[q_{m,v}].
+\]</span></p>
+<p>This remains variational inference: the parameters select the candidate density. Ordinary parameter optimization is how we implement the variational problem.</p>
+<p>The choice of family matters. A single Gaussian cannot exactly represent a posterior with two separated peaks. Even perfect optimization cannot remove that limitation. This family-based approach is central to the account in <a href="https://arxiv.org/abs/1601.00670">Blei, Kucukelbir, and McAuliffe’s review</a>.</p>
+</section>
+<section id="connect-the-parameters-to-internal-states" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="connect-the-parameters-to-internal-states"><span class="header-section-number">2.7</span> 7. Connect the parameters to internal states</h2>
+<p>In Free Energy Principle literature, you will often encounter</p>
+<p><span class="math display">\[
+q_\mu(\eta),
+\]</span></p>
+<p>where <span class="math inline">\(\mu\)</span> denotes internal states that parameterize a density over external states <span class="math inline">\(\eta\)</span>.</p>
+<p>Here <span class="math inline">\(\mu\)</span> need not be a scalar mean. It can be a vector whose components specify several distribution parameters, possibly through a nonlinear mapping <span class="math inline">\(\theta=\theta(\mu)\)</span>.</p>
+<p>For example, a model could use two internal coordinates:</p>
+<p><span class="math display">\[
+\mu=(\mu_1,\mu_2),
+\qquad m=\mu_1,
+\qquad v=e^{\mu_2}.
+\]</span></p>
+<p>The exponential ensures positive variance. A physical change in <span class="math inline">\(\mu\)</span> then corresponds, under this specified mapping, to a change in the candidate distribution.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>A mathematical representation needs justification
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Writing <span class="math inline">\(q_\mu\)</span> defines a way to represent distributions using internal states. It does not by itself prove that an arbitrary thermostat performs Bayesian inference. To make that claim, we must also justify the representation and its relation to the system’s dynamics. Neither the notation nor the existence of a Markov blanket alone establishes posterior matching.</p>
+</div>
+</div>
+</section>
+<section id="give-the-candidate-a-score-kl-divergence" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="give-the-candidate-a-score-kl-divergence"><span class="header-section-number">2.8</span> 8. Give the candidate a score: KL divergence</h2>
+<p>We need a measure of how well <span class="math inline">\(q\)</span> approximates the posterior. A standard choice is</p>
+<p><span class="math display">\[
+D_{\mathrm{KL}}\!\left(q\,\Vert\,p(\cdot\mid s)\right)
+=\int q(\eta)\ln\frac{q(\eta)}{p(\eta\mid s)}\,d\eta.
+\]</span></p>
+<p>This is an average log density ratio, with the averaging performed under <span class="math inline">\(q\)</span>. It satisfies</p>
+<p><span class="math display">\[
+D_{\mathrm{KL}}\geq 0,
+\]</span></p>
+<p>with equality precisely when the two distributions agree almost everywhere. “Almost everywhere” permits differences on sets of zero measure, which do not change probabilities.</p>
+<p>KL divergence is not a geometric distance: it is generally asymmetric. The direction used here, <span class="math inline">\(D_{\mathrm{KL}}(q\Vert p)\)</span>, matters.</p>
+<p>We would therefore like to solve</p>
+<p><span class="math display">\[
+q^*=\arg\min_{q\in\mathcal Q}
+D_{\mathrm{KL}}\!\left(q\Vert p(\cdot\mid s)\right).
+\]</span></p>
+<p>Assume throughout that <span class="math inline">\(p(s)&gt;0\)</span> and that the relevant integrals are finite. If <span class="math inline">\(q\)</span> assigns positive probability where the posterior is zero, this KL divergence is infinite.</p>
+</section>
+<section id="remove-the-difficult-posterior-normalization" class="level2" data-number="2.9">
+<h2 data-number="2.9" class="anchored" data-anchor-id="remove-the-difficult-posterior-normalization"><span class="header-section-number">2.9</span> 9. Remove the difficult posterior normalization</h2>
+<p>There is an apparent obstacle: our score contains the posterior we were trying to avoid computing.</p>
+<p>Use Bayes’ rule inside the logarithm:</p>
+<p><span class="math display">\[
+\ln p(\eta\mid s)=\ln p(s,\eta)-\ln p(s).
+\]</span></p>
+<p>Substituting gives</p>
+<p><span class="math display">\[
+\begin{aligned}
+D_{\mathrm{KL}}\!\left(q\Vert p(\cdot\mid s)\right)
+&amp;=\int q(\eta)
+\left[\ln q(\eta)-\ln p(s,\eta)+\ln p(s)\right]d\eta\\
+&amp;=\int q(\eta)\left[\ln q(\eta)-\ln p(s,\eta)\right]d\eta
++\ln p(s)\underbrace{\int q(\eta)d\eta}_{1}.
+\end{aligned}
+\]</span></p>
+<p>Define <strong>variational free energy</strong> by</p>
+<p><span id="eq-vfe-definition"><span class="math display">\[
+\boxed{
+F[q;s]=\int q(\eta)\left[\ln q(\eta)-\ln p(s,\eta)\right]d\eta.
+}
+\tag{2.1}\]</span></span></p>
+<p>The semicolon emphasizes that <span class="math inline">\(s\)</span> is held fixed while <span class="math inline">\(q\)</span> varies. We will sometimes abbreviate this as <span class="math inline">\(F[q]\)</span>.</p>
+<p>Using expectation notation, the same definition is</p>
+<p><span class="math display">\[
+F[q;s]=\mathbb E_q\!\left[\ln q(\eta)-\ln p(s,\eta)\right].
+\]</span></p>
+<p>We have removed the posterior’s evidence denominator from the objective. Evaluating or estimating expectations under <span class="math inline">\(q\)</span> may still require work; the transformation does not make every inference problem easy.</p>
+</section>
+<section id="understand-the-key-identity" class="level2" data-number="2.10">
+<h2 data-number="2.10" class="anchored" data-anchor-id="understand-the-key-identity"><span class="header-section-number">2.10</span> 10. Understand the key identity</h2>
+<p>Rearranging the previous calculation yields</p>
+<p><span id="eq-vfe-identity"><span class="math display">\[
+\boxed{
+F[q;s]
+=\underbrace{D_{\mathrm{KL}}\!\left(q\Vert p(\cdot\mid s)\right)}_{\text{approximation gap}}
++\underbrace{[-\ln p(s)]}_{\text{surprisal of the fixed observation}}.
+}
+\tag{2.2}\]</span></span></p>
+<p>For fixed <span class="math inline">\(s\)</span> and a fixed model, <span class="math inline">\(-\ln p(s)\)</span> is a constant with respect to <span class="math inline">\(q\)</span>. Therefore</p>
+<p><span class="math display">\[
+\arg\min_{q\in\mathcal Q}F[q;s]
+=\arg\min_{q\in\mathcal Q}D_{\mathrm{KL}}\!\left(q\Vert p(\cdot\mid s)\right).
+\]</span></p>
+<p>This is the payoff: <strong>we can optimize an objective built from the joint model and our candidate density, and thereby improve the posterior approximation.</strong></p>
+<p>Non-negativity of KL also gives</p>
+<p><span class="math display">\[
+F[q;s]\geq-\ln p(s).
+\]</span></p>
+<p>Free energy is an <strong>upper bound</strong> on surprisal. The gap closes when <span class="math inline">\(q\)</span> equals the posterior. If <span class="math inline">\(\mathcal Q\)</span> excludes the posterior, even its best member leaves a positive gap. A numerical optimizer can also stop short of the best member.</p>
+<p>Machine-learning texts often maximize the <strong>evidence lower bound</strong>, or ELBO:</p>
+<p><span class="math display">\[
+\operatorname{ELBO}[q;s]=-F[q;s]\leq\ln p(s).
+\]</span></p>
+<p>These are the same optimization with opposite signs.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>What does inference improve?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>During this optimization, the observation and model are fixed. Improving <span class="math inline">\(q\)</span> decreases the approximation gap; it does <strong>not</strong> increase <span class="math inline">\(p(s)\)</span> or make the recorded observation less surprising. Model learning and action can change other quantities, but they are different optimization problems.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>A note on continuous densities and units
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We use natural logarithms, giving information quantities in nats. For continuous temperatures, <span class="math inline">\(p(s)\)</span> is a density, not the probability of one exact real number. Density-based surprisal depends on the measurement coordinates and can be negative. Throughout, we use fixed coordinates and reference measures—temperature expressed numerically in degrees Celsius in the example. KL divergence between distributions is invariant under a common invertible coordinate transformation.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="why-call-it-free-energy" class="level2" data-number="2.11">
+<h2 data-number="2.11" class="anchored" data-anchor-id="why-call-it-free-energy"><span class="header-section-number">2.11</span> 11. Why call it “free energy”?</h2>
+<p>Introduce the entropy of <span class="math inline">\(q\)</span>:</p>
+<p><span class="math display">\[
+H[q]=-\mathbb E_q[\ln q(\eta)].
+\]</span></p>
+<p>For a continuous density this is <em>differential entropy</em>. Our definition becomes</p>
+<p><span class="math display">\[
+F[q;s]=\underbrace{\mathbb E_q[-\ln p(s,\eta)]}_{\text{expected energy-like quantity}}-H[q].
+\]</span></p>
+<p>This resembles the Helmholtz free energy of thermodynamics,</p>
+<p><span class="math display">\[
+A=U-TS.
+\]</span></p>
+<p>We can make the correspondence explicit for a canonical ensemble. Suppose physical microstates <span class="math inline">\(\eta\)</span> have energy <span class="math inline">\(E(\eta)\)</span> and equilibrium density</p>
+<p><span class="math display">\[
+p_{\mathrm{eq}}(\eta)=\frac{e^{-\beta E(\eta)}}{Z},
+\qquad\beta=\frac{1}{k_B T}.
+\]</span></p>
+<p>For an admissible trial density <span class="math inline">\(q\)</span>, define</p>
+<p><span class="math display">\[
+\mathcal A[q]=\mathbb E_q[E]-T k_B H[q].
+\]</span></p>
+<p>Substituting <span class="math inline">\(\ln p_{\mathrm{eq}}=-\beta E-\ln Z\)</span> into KL divergence gives</p>
+<p><span class="math display">\[
+\begin{aligned}
+k_B T D_{\mathrm{KL}}(q\Vert p_{\mathrm{eq}})
+&amp;=\mathbb E_q[E]-k_B T H[q]+k_B T\ln Z\\
+&amp;=\mathcal A[q]-A_{\mathrm{eq}},
+\end{aligned}
+\]</span></p>
+<p>where <span class="math inline">\(A_{\mathrm{eq}}=-k_B T\ln Z\)</span>. Thus the equilibrium density minimizes this thermodynamic free-energy functional, just as the posterior minimizes variational free energy.</p>
+<p>The shared mathematical structure explains the terminology. However, <span class="math inline">\(-\ln p(s,\eta)\)</span> in an inference model is generally not a physical Hamiltonian. <strong>Variational free energy is not automatically an amount of energy in joules stored in a brain or controller.</strong></p>
+</section>
+<section id="why-specifically-variational-free-energy" class="level2" data-number="2.12">
+<h2 data-number="2.12" class="anchored" data-anchor-id="why-specifically-variational-free-energy"><span class="header-section-number">2.12</span> 12. Why specifically <em>variational</em> free energy?</h2>
+<p>We can now unpack the name precisely:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Variational density <span class="math inline">\(q\)</span></td>
+<td>The adjustable probability distribution</td>
+</tr>
+<tr class="even">
+<td>Variational free energy <span class="math inline">\(F[q;s]\)</span></td>
+<td>The functional used to score it</td>
+</tr>
+<tr class="odd">
+<td>Variational inference</td>
+<td>Optimizing that functional over an allowed family</td>
+</tr>
+</tbody>
+</table>
+<p>A second decomposition is useful in Active Inference. Factor <span class="math inline">\(p(s,\eta)=p(s\mid\eta)p(\eta)\)</span> in <a href="#eq-vfe-definition" class="quarto-xref">Equation&nbsp;<span>2.1</span></a>:</p>
+<p><span class="math display">\[
+\begin{aligned}
+F[q;s]
+&amp;=\mathbb E_q[\ln q(\eta)-\ln p(\eta)-\ln p(s\mid\eta)]\\
+&amp;=\underbrace{D_{\mathrm{KL}}(q\Vert p(\eta))}_{\text{complexity}}
+-\underbrace{\mathbb E_q[\ln p(s\mid\eta)]}_{\text{accuracy}}.
+\end{aligned}
+\]</span></p>
+<p>Accuracy rewards candidate states that explain the observation. Complexity measures departure from the <strong>prior</strong>, not necessarily from the previous time step’s belief. These terms jointly produce posterior inference; the complexity term is not an arbitrary prohibition on changing one’s mind.</p>
+</section>
+<section id="work-through-the-thermometer-numerically" class="level2" data-number="2.13">
+<h2 data-number="2.13" class="anchored" data-anchor-id="work-through-the-thermometer-numerically"><span class="header-section-number">2.13</span> 13. Work through the thermometer numerically</h2>
+<p>Let temperatures be represented by their numerical values in degrees Celsius. Choose</p>
+<p><span class="math display">\[
+p(\eta)=\mathcal N(\eta;m_0,v_0),
+\qquad m_0=22,\quad v_0=4,
+\]</span></p>
+<p>and a sensor model</p>
+<p><span class="math display">\[
+p(s\mid\eta)=\mathcal N(s;\eta,r),
+\qquad r=1,\quad s=17.
+\]</span></p>
+<p>The prior standard deviation is <span class="math inline">\(2^\circ\mathrm C\)</span> and the sensor-noise standard deviation is <span class="math inline">\(1^\circ\mathrm C\)</span>. The variances have units of squared degrees Celsius.</p>
+<p>Choose the variational family</p>
+<p><span class="math display">\[
+q(\eta)=\mathcal N(\eta;m,v).
+\]</span></p>
+<section id="first-compute-the-objective" class="level3" data-number="2.13.1">
+<h3 data-number="2.13.1" class="anchored" data-anchor-id="first-compute-the-objective"><span class="header-section-number">2.13.1</span> First compute the objective</h3>
+<p>For a Gaussian, <span class="math inline">\(H[q]=\tfrac12\ln(2\pi e v)\)</span>. Also,</p>
+<p><span class="math display">\[
+\mathbb E_q[(s-\eta)^2]=(s-m)^2+v,
+\]</span></p>
+<p>because the expected squared deviation includes both the squared displacement of the mean and the variance. Similarly,</p>
+<p><span class="math display">\[
+\mathbb E_q[(\eta-m_0)^2]=(m-m_0)^2+v.
+\]</span></p>
+<p>Substitution into the free-energy definition gives</p>
+<p><span id="eq-vfe-gaussian"><span class="math display">\[
+\boxed{
+\begin{aligned}
+F(m,v;s)={}&amp;\frac12\ln(2\pi r)
++\frac{(s-m)^2+v}{2r}\\
+&amp;+\frac12\ln(2\pi v_0)
++\frac{(m-m_0)^2+v}{2v_0}\\
+&amp;-\frac12\ln(2\pi e v).
+\end{aligned}
+}
+\tag{2.3}\]</span></span></p>
+<p>The first line comes from the likelihood, the second from the prior, and the last from negative entropy. Keeping the constants lets us check the absolute free-energy bound, not only its gradients.</p>
+</section>
+<section id="then-vary-the-mean-and-variance" class="level3" data-number="2.13.2">
+<h3 data-number="2.13.2" class="anchored" data-anchor-id="then-vary-the-mean-and-variance"><span class="header-section-number">2.13.2</span> Then vary the mean and variance</h3>
+<p>Differentiate with respect to <span class="math inline">\(m\)</span>:</p>
+<p><span class="math display">\[
+\frac{\partial F}{\partial m}
+=\frac{m-s}{r}+\frac{m-m_0}{v_0}=0.
+\]</span></p>
+<p>Solving gives</p>
+<p><span class="math display">\[
+m^*=\frac{s/r+m_0/v_0}{1/r+1/v_0}=18.
+\]</span></p>
+<p>This is a <strong>precision-weighted average</strong>: precision is inverse variance. The more precise sensor receives greater weight than the prior.</p>
+<p>For the variance,</p>
+<p><span class="math display">\[
+\frac{\partial F}{\partial v}
+=\frac{1}{2r}+\frac{1}{2v_0}-\frac{1}{2v}=0,
+\]</span></p>
+<p>so</p>
+<p><span class="math display">\[
+v^*=\left(\frac1r+\frac1{v_0}\right)^{-1}=0.8.
+\]</span></p>
+<p>The second derivatives are positive, and there is no mixed derivative:</p>
+<p><span class="math display">\[
+\frac{\partial^2F}{\partial m^2}=\frac1r+\frac1{v_0}&gt;0,
+\qquad
+\frac{\partial^2F}{\partial v^2}=\frac{1}{2v^2}&gt;0.
+\]</span></p>
+<p>These stationary values give the unique minimum for <span class="math inline">\(v&gt;0\)</span>.</p>
+<p>The posterior of this Gaussian model is exactly</p>
+<p><span class="math display">\[
+p(\eta\mid s)=\mathcal N(\eta;18,0.8).
+\]</span></p>
+<p>Because our family contains it, the optimum reaches the posterior. Notice that the answer is centered at <strong>18</strong>, not at the sensor reading <strong>17</strong>: inference combines prior information with the observation.</p>
+</section>
+<section id="watch-the-approximation-improve" class="level3" data-number="2.13.3">
+<h3 data-number="2.13.3" class="anchored" data-anchor-id="watch-the-approximation-improve"><span class="header-section-number">2.13.3</span> Watch the approximation improve</h3>
+<p>The evidence is <span class="math inline">\(p(s)=\mathcal N(s;m_0,v_0+r)\)</span>, giving</p>
+<p><span class="math display">\[
+-\ln p(s)=\frac12\ln(2\pi\cdot5)+\frac{(17-22)^2}{2\cdot5}
+\approx4.224.
+\]</span></p>
+<p>The following candidates illustrate simultaneous changes in mean and uncertainty. They are illustrative choices, not the output of a specified learning algorithm.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Candidate</th>
+<th style="text-align: right;">Mean <span class="math inline">\(m\)</span></th>
+<th style="text-align: right;">Variance <span class="math inline">\(v\)</span></th>
+<th style="text-align: right;"><span class="math inline">\(F[q;s]\)</span></th>
+<th style="text-align: right;">Posterior KL gap</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Initial, equal to prior</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">15.419</td>
+<td style="text-align: right;">11.195</td>
+</tr>
+<tr class="even">
+<td>Intermediate</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">7.016</td>
+<td style="text-align: right;">2.792</td>
+</tr>
+<tr class="odd">
+<td>Near posterior</td>
+<td style="text-align: right;">18.5</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4.393</td>
+<td style="text-align: right;">0.170</td>
+</tr>
+<tr class="even">
+<td>Exact posterior</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">4.224</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p>Every row satisfies <span class="math inline">\(F=-\ln p(s)+D_{\mathrm{KL}}\)</span>. The evidence is fixed throughout.</p>
+<div id="cell-fig-varying-density" class="cell" data-fig-height="4.3" data-fig-width="11" data-execution_count="1">
+<details class="code-fold">
+<summary>Show the Python code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>prior_mean, prior_var <span class="op">=</span> <span class="fl">22.0</span>, <span class="fl">4.0</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>observation, noise_var <span class="op">=</span> <span class="fl">17.0</span>, <span class="fl">1.0</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>posterior_var <span class="op">=</span> <span class="fl">1.0</span> <span class="op">/</span> (<span class="fl">1.0</span> <span class="op">/</span> noise_var <span class="op">+</span> <span class="fl">1.0</span> <span class="op">/</span> prior_var)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>posterior_mean <span class="op">=</span> posterior_var <span class="op">*</span> (</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    observation <span class="op">/</span> noise_var <span class="op">+</span> prior_mean <span class="op">/</span> prior_var</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> normal_pdf(x, mean, variance):</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Evaluate a normalized Gaussian density with the given variance."""</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.exp(<span class="op">-</span><span class="fl">0.5</span> <span class="op">*</span> (x <span class="op">-</span> mean)<span class="op">**</span><span class="dv">2</span> <span class="op">/</span> variance) <span class="op">/</span> np.sqrt(</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="fl">2.0</span> <span class="op">*</span> np.pi <span class="op">*</span> variance</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> free_energy(mean, variance):</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Evaluate the full Gaussian variational objective for fixed data."""</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    likelihood_term <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> np.log(<span class="fl">2.0</span> <span class="op">*</span> np.pi <span class="op">*</span> noise_var)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    likelihood_term <span class="op">+=</span> ((observation <span class="op">-</span> mean)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> variance) <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> noise_var)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    prior_term <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> np.log(<span class="fl">2.0</span> <span class="op">*</span> np.pi <span class="op">*</span> prior_var)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    prior_term <span class="op">+=</span> ((mean <span class="op">-</span> prior_mean)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> variance) <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> prior_var)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    entropy <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> np.log(<span class="fl">2.0</span> <span class="op">*</span> np.pi <span class="op">*</span> np.e <span class="op">*</span> variance)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> likelihood_term <span class="op">+</span> prior_term <span class="op">-</span> entropy</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>surprisal <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> np.log(<span class="dv">2</span> <span class="op">*</span> np.pi <span class="op">*</span> (prior_var <span class="op">+</span> noise_var))</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>surprisal <span class="op">+=</span> (observation <span class="op">-</span> prior_mean)<span class="op">**</span><span class="dv">2</span> <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> (prior_var <span class="op">+</span> noise_var))</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>temperatures <span class="op">=</span> np.linspace(<span class="dv">12</span>, <span class="dv">29</span>, <span class="dv">700</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>candidates <span class="op">=</span> [(<span class="dv">22</span>, <span class="dv">4</span>), (<span class="dv">20</span>, <span class="dv">2</span>), (<span class="fl">18.5</span>, <span class="dv">1</span>), (posterior_mean, posterior_var)]</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [<span class="st">"#9b4f00"</span>, <span class="st">"#6d55a3"</span>, <span class="st">"#2879a8"</span>, <span class="st">"#087f5b"</span>]</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>styles <span class="op">=</span> [<span class="st">"--"</span>, <span class="st">"-."</span>, <span class="st">":"</span>, <span class="st">"-"</span>]</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">11</span>, <span class="fl">4.3</span>), constrained_layout<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (mean, variance), color, style <span class="kw">in</span> <span class="bu">zip</span>(candidates, colors, styles):</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].plot(</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>        temperatures, normal_pdf(temperatures, mean, variance),</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span>color, linestyle<span class="op">=</span>style, linewidth<span class="op">=</span><span class="fl">2.2</span>,</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>        label<span class="op">=</span><span class="ss">f"m = </span><span class="sc">{</span>mean<span class="sc">:g}</span><span class="ss">, v = </span><span class="sc">{</span>variance<span class="sc">:g}</span><span class="ss">"</span>,</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].axvline(observation, color<span class="op">=</span><span class="st">"0.5"</span>, linestyle<span class="op">=</span><span class="st">":"</span>, linewidth<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"Possible temperature η (°C)"</span>, ylabel<span class="op">=</span><span class="st">"Density (1/°C)"</span>,</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>            title<span class="op">=</span><span class="st">"Changing a whole distribution"</span>)</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].legend(frameon<span class="op">=</span><span class="va">False</span>, fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>means <span class="op">=</span> np.linspace(<span class="dv">14</span>, <span class="dv">23</span>, <span class="dv">400</span>)</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].plot(means, free_energy(means, posterior_var), color<span class="op">=</span><span class="st">"#2879a8"</span>,</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>             linewidth<span class="op">=</span><span class="fl">2.5</span>, label<span class="op">=</span><span class="st">"F(m, v = 0.8)"</span>)</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].axhline(surprisal, color<span class="op">=</span><span class="st">"#087f5b"</span>, linestyle<span class="op">=</span><span class="st">"--"</span>,</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>                label<span class="op">=</span><span class="st">"Fixed bound: −ln p(s)"</span>)</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].scatter([posterior_mean], [surprisal], color<span class="op">=</span><span class="st">"#087f5b"</span>, zorder<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"Candidate mean m (°C)"</span>, ylabel<span class="op">=</span><span class="st">"Free energy (nats)"</span>,</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>            title<span class="op">=</span><span class="st">"A slice through the objective"</span>)</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].legend(frameon<span class="op">=</span><span class="va">False</span>, fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax <span class="kw">in</span> axes:</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>    ax.spines[[<span class="st">"top"</span>, <span class="st">"right"</span>]].set_visible(<span class="va">False</span>)</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>    ax.grid(alpha<span class="op">=</span><span class="fl">0.15</span>)</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-varying-density" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Four Gaussian densities approach the posterior at temperature 18 degrees Celsius. A second panel shows a parabola of free energy versus candidate mean, touching the surprisal bound at mean 18.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-varying-density-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="what-is-variational_files/figure-html/fig-varying-density-output-1.png" alt="Four Gaussian densities approach the posterior at temperature 18 degrees Celsius. A second panel shows a parabola of free energy versus candidate mean, touching the surprisal bound at mean 18." width="1067" height="424" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-varying-density-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.1: Left: varying the mean and variance changes the entire candidate density. Right: on the slice v = 0.8, free energy falls to the fixed surprisal bound at m = 18. The vertical gap above the bound is posterior KL divergence.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="what-if-the-family-is-too-restricted" class="level3" data-number="2.13.4">
+<h3 data-number="2.13.4" class="anchored" data-anchor-id="what-if-the-family-is-too-restricted"><span class="header-section-number">2.13.4</span> What if the family is too restricted?</h3>
+<p>Suppose we fix <span class="math inline">\(v=4\)</span> and vary only the mean. The best mean is still <span class="math inline">\(18\)</span>, but <span class="math inline">\(q=\mathcal N(18,4)\)</span> remains too broad. Its residual KL divergence is</p>
+<p><span class="math display">\[
+\frac12\left[\frac{4}{0.8}-1-\ln\frac{4}{0.8}\right]
+\approx1.195\ \text{nats}.
+\]</span></p>
+<p>Matching the posterior mean is not the same as matching the posterior distribution.</p>
+</section>
+</section>
+<section id="make-the-word-variation-tangible" class="level2" data-number="2.14">
+<h2 data-number="2.14" class="anchored" data-anchor-id="make-the-word-variation-tangible"><span class="header-section-number">2.14</span> 14. Make the word “variation” tangible</h2>
+<p>Imagine a flexible sheet whose shape represents a density. You adjust the sheet and evaluate a score. If the score falls, the new shape is a better candidate.</p>
+<p>Unlike an unconstrained rubber sheet, this one must stay nonnegative and enclose unit area. Its permitted shapes depend on your family <span class="math inline">\(\mathcal Q\)</span>. A Gaussian family permits shifting and stretching a single bell-shaped curve.</p>
+<p>The analogy identifies three separate ingredients: a deformable object <span class="math inline">\(q\)</span>, admissible deformations, and a scalar score <span class="math inline">\(F[q;s]\)</span>. The following optional calculation turns that picture into calculus.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Optional: minimize over the full density
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Instead of assuming Gaussian form, minimize <span class="math inline">\(F[q;s]\)</span> over normalized densities on the posterior support. Introduce a Lagrange multiplier <span class="math inline">\(\lambda\)</span> for normalization:</p>
+<p><span class="math display">\[
+\mathcal J[q]=F[q;s]+\lambda\left(\int q(\eta)d\eta-1\right).
+\]</span></p>
+<p>Perturb <span class="math inline">\(q\)</span> to <span class="math inline">\(q+\epsilon h\)</span>. Since <span class="math inline">\(d(q\ln q)/dq=\ln q+1\)</span>, the first variation is</p>
+<p><span class="math display">\[
+\left.\frac{d\mathcal J[q+\epsilon h]}{d\epsilon}\right|_{\epsilon=0}
+=\int h(\eta)\left[\ln q(\eta)+1-\ln p(s,\eta)+\lambda\right]d\eta.
+\]</span></p>
+<p>For this to vanish for arbitrary admissible perturbations in the interior of the support, the bracket must vanish:</p>
+<p><span class="math display">\[
+\frac{\delta\mathcal J}{\delta q(\eta)}
+=\ln q(\eta)+1-\ln p(s,\eta)+\lambda=0.
+\]</span></p>
+<p>The expression <span class="math inline">\(\delta\mathcal J/\delta q(\eta)\)</span> is the <strong>functional derivative</strong>. It describes sensitivity to changing the density at each location <span class="math inline">\(\eta\)</span>.</p>
+<p>Rearranging,</p>
+<p><span class="math display">\[
+q^*(\eta)=e^{-1-\lambda}p(s,\eta).
+\]</span></p>
+<p>Normalization requires</p>
+<p><span class="math display">\[
+1=e^{-1-\lambda}\int p(s,\eta)d\eta
+=e^{-1-\lambda}p(s).
+\]</span></p>
+<p>Therefore</p>
+<p><span class="math display">\[
+q^*(\eta)=\frac{p(s,\eta)}{p(s)}=p(\eta\mid s).
+\]</span></p>
+<p>We have recovered Bayes’ rule by varying a density. The KL identity establishes that this stationary density is a global minimum. This derivation identifies the mathematical optimum; it does not supply a general way to compute the evidence integral.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="return-to-the-free-energy-principle" class="level2" data-number="2.15">
+<h2 data-number="2.15" class="anchored" data-anchor-id="return-to-the-free-energy-principle"><span class="header-section-number">2.15</span> 15. Return to the Free Energy Principle</h2>
+<p>Read the notation <span class="math inline">\(q_\mu(\eta)\)</span> as:</p>
+<blockquote class="blockquote">
+<p>An adjustable candidate distribution over external states, parameterized by internal states.</p>
+</blockquote>
+<p>For a designed inference algorithm, one possible update is gradient descent:</p>
+<p><span class="math display">\[
+\dot\mu=-\kappa\nabla_\mu F[q_\mu;s],
+\qquad\kappa&gt;0.
+\]</span></p>
+<p>If <span class="math inline">\(s\)</span> and the model stay fixed, this gives</p>
+<p><span class="math display">\[
+\frac{dF}{dt}
+=\nabla_\mu F\cdot\dot\mu
+=-\kappa\|\nabla_\mu F\|^2\leq0.
+\]</span></p>
+<p>That is a concrete example of internal-state dynamics implementing variational optimization. In our Gaussian example, descending in the mean uses</p>
+<p><span class="math display">\[
+\dot m=-\kappa\left[\frac{m-s}{r}+\frac{m-m_0}{v_0}\right].
+\]</span></p>
+<p>The two precision-weighted discrepancies pull the estimate toward the observation and the prior mean.</p>
+<p>This deliberately simple descent equation is not a general theorem about every physical system. Stochastic dynamics, changing sensory inputs, and solenoidal flow require additional treatment. In <a href="https://arxiv.org/abs/2201.06387">Friston and colleagues’ account</a>, relating physical dynamics to Bayesian descriptions is a further argument built on assumptions about the system and its partition.</p>
+<p>For orientation, that paper also uses particular states <span class="math inline">\(\pi=(s,a,\mu)\)</span>. The corresponding free-energy identity can be written</p>
+<p><span class="math display">\[
+F[q_\mu;\pi]=D_{\mathrm{KL}}\!\left(q_\mu(\eta)\Vert p(\eta\mid\pi)\right)-\ln p(\pi).
+\]</span></p>
+<p>The algebra has the same form, but <span class="math inline">\(\mu\)</span> now appears both in the density parameters and in <span class="math inline">\(\pi\)</span>. Our fixed-observation calculation does not by itself establish the paper’s claims about gradients of physical states. In particular, exact identities involving a specially constructed density and conditional modes should not be read as saying that every candidate <span class="math inline">\(q_\mu\)</span> equals the posterior.</p>
+<p>Finally, distinguish <strong>inference</strong> from <strong>action</strong>. Updating <span class="math inline">\(q\)</span> revises the temperature estimate. Turning on a heater changes the environment and subsequent observations. To model the latter, we need a model of how actions affect observations and how preferred outcomes or viable states enter the controller’s model. An inference prior centered at <span class="math inline">\(22^\circ\mathrm C\)</span> alone is not a complete heating policy.</p>
+<p>Variational free energy is also distinct from <strong>expected free energy</strong>, an objective used in many Active Inference models to evaluate possible future policies. Understanding the present chapter provides the foundation for that later topic.</p>
+</section>
+<section id="keep-three-different-objects-separate" class="level2" data-number="2.16">
+<h2 data-number="2.16" class="anchored" data-anchor-id="keep-three-different-objects-separate"><span class="header-section-number">2.16</span> 16. Keep three different objects separate</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Symbol</th>
+<th>Meaning</th>
+<th>Thermometer example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\eta\)</span></td>
+<td>The hidden state itself</td>
+<td>Actual room temperature</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(p(\eta\mid s)\)</span></td>
+<td>Exact posterior under the chosen model</td>
+<td>Distribution implied by prior, sensor model, and reading</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(q_\mu(\eta)\)</span></td>
+<td>Candidate distribution</td>
+<td>Distribution represented by adjustable internal parameters</td>
+</tr>
+</tbody>
+</table>
+<p>“Exact posterior” means exact <strong>under the model</strong>. It does not guarantee that the model correctly describes the real sensor or room.</p>
+<p>The central optimization is</p>
+<p><span class="math display">\[
+\boxed{
+\mu^*=\arg\min_\mu F[q_\mu;s].
+}
+\]</span></p>
+<p>Varying <span class="math inline">\(\mu\)</span> varies a distribution. At a global optimum, we obtain the member of the allowed family with the smallest posterior KL divergence. If the family contains the posterior, that divergence can reach zero.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Explain it in one sentence
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Variational inference turns posterior estimation into optimization over probability distributions; variational free energy is the objective whose excess above surprisal measures the remaining posterior mismatch.</strong></p>
+</div>
+</div>
+</section>
+<section id="check-your-understanding" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="check-your-understanding">Check your understanding</h2>
+<ol type="1">
+<li>In <span class="math inline">\(F[q;s]\)</span>, which object is varied and which observation is held fixed?</li>
+<li>Why can free energy fall while <span class="math inline">\(p(s)\)</span> stays unchanged?</li>
+<li>In the Gaussian example, why is the posterior mean <span class="math inline">\(18\)</span> rather than <span class="math inline">\(17\)</span>?</li>
+<li>If the mean is correct but the variance is too large, is inference exact?</li>
+<li>Does <span class="math inline">\(\delta S=0\)</span> always mean that the action is minimized?</li>
+<li>If we allow an arbitrary normalized density, what density minimizes <span class="math inline">\(F\)</span>?</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Suggested answers
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>We vary <span class="math inline">\(q\)</span>, or the parameters selecting it. We hold <span class="math inline">\(s\)</span> and the generative model fixed.</li>
+<li>The posterior KL gap falls; the surprisal term is constant.</li>
+<li>The estimate combines the prior mean <span class="math inline">\(22\)</span> and reading <span class="math inline">\(17\)</span>, weighted by their precisions.</li>
+<li>No.&nbsp;Exact inference matches the full posterior distribution, including its uncertainty.</li>
+<li>No.&nbsp;It expresses stationarity of the action.</li>
+<li>The posterior <span class="math inline">\(p(\eta\mid s)\)</span>, subject to the support and regularity conditions discussed above.</li>
+</ol>
+</div>
+</div>
+</div>
+</section>
+<section id="further-reading" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="further-reading">Further reading</h2>
+<ul>
+<li>David M. Blei, Alp Kucukelbir, and Jon D. McAuliffe (2017), <a href="https://arxiv.org/abs/1601.00670"><em>Variational Inference: A Review for Statisticians</em></a>. A systematic introduction to variational families, KL minimization, and the ELBO.</li>
+<li>Karl Friston, Lancelot Da Costa, Noor Sajid, Conor Heins, Kai Ueltzhöffer, Grigorios A. Pavliotis, and Thomas Parr (2023), <a href="https://arxiv.org/abs/2201.06387"><em>The free energy principle made simpler but not too simple</em></a>. The connection to random dynamical systems and the Bayesian interpretation of internal states; the preprint first appeared in 2022.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./intro.html" class="pagination-link" aria-label="Introduction">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./summary.html" class="pagination-link" aria-label="Summary">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Summary</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

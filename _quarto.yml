@@ -1,0 +1,27 @@
+project:
+  type: book
+
+book:
+  title: "Introduction to the Free Energy Principle"
+  author: "Omer Tzuk"
+  date: "9/5/2026"
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - chapters/equation-4-least-action.ipynb
+    - chapters/equation-11-markov-blankets.ipynb
+    - summary.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+  pdf:
+    documentclass: scrreprt
+
+
+

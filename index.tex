@@ -1,0 +1,1403 @@
+% Options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  letterpaper,
+  DIV=11,
+  numbers=noendperiod]{scrreprt}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{5}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{241,243,245}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.40,0.45,0.13}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.07,0.07,0.07}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+
+\usepackage{longtable,booktabs,array}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+
+
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+ 
+
+
+\KOMAoption{captions}{tableheading}
+\makeatletter
+\@ifpackageloaded{tcolorbox}{}{\usepackage[skins,breakable]{tcolorbox}}
+\@ifpackageloaded{fontawesome5}{}{\usepackage{fontawesome5}}
+\definecolor{quarto-callout-color}{HTML}{909090}
+\definecolor{quarto-callout-note-color}{HTML}{0758E5}
+\definecolor{quarto-callout-important-color}{HTML}{CC1914}
+\definecolor{quarto-callout-warning-color}{HTML}{EB9113}
+\definecolor{quarto-callout-tip-color}{HTML}{00A047}
+\definecolor{quarto-callout-caution-color}{HTML}{FC5300}
+\definecolor{quarto-callout-color-frame}{HTML}{acacac}
+\definecolor{quarto-callout-note-color-frame}{HTML}{4582ec}
+\definecolor{quarto-callout-important-color-frame}{HTML}{d9534f}
+\definecolor{quarto-callout-warning-color-frame}{HTML}{f0ad4e}
+\definecolor{quarto-callout-tip-color-frame}{HTML}{02b875}
+\definecolor{quarto-callout-caution-color-frame}{HTML}{fd7e14}
+\makeatother
+\makeatletter
+\@ifpackageloaded{bookmark}{}{\usepackage{bookmark}}
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+% fallback for those not using the hyperref driver hyperxmp:
+\makeatletter
+\@ifundefined{xmpquote}{\newcommand{\xmpquote}[1]{#1}}{}
+\makeatother
+\hypersetup{
+  pdftitle={Introduction to the Free Energy Principle},
+  pdfauthor={Omer Tzuk},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+
+\title{Introduction to the Free Energy Principle}
+\author{Omer Tzuk}
+\date{2026-09-05}
+\begin{document}
+\maketitle
+
+\renewcommand*\contentsname{Table of contents}
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+
+\bookmarksetup{startatroot}
+
+\chapter*{Preface}\label{preface}
+\addcontentsline{toc}{chapter}{Preface}
+
+\markboth{Preface}{Preface}
+
+This is a Quarto book.
+
+To learn more about Quarto books visit
+\url{https://quarto.org/docs/books}.
+
+\bookmarksetup{startatroot}
+
+\chapter{Introduction}\label{introduction}
+
+This is a book created from markdown and executable code.
+
+See Knuth (1984) for additional discussion of literate programming.
+
+\bookmarksetup{startatroot}
+
+\chapter{What does `variational'
+mean?}\label{what-does-variational-mean}
+
+From varying a trajectory to varying a probability distribution
+
+\hfill\break
+
+\begin{tcolorbox}[enhanced jigsaw, arc=.35mm, bottomrule=.15mm, bottomtitle=1mm, breakable, colback=white, colbacktitle=quarto-callout-note-color!10!white, colframe=quarto-callout-note-color-frame, coltitle=black, left=2mm, leftrule=.75mm, opacityback=0, opacitybacktitle=0.6, rightrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{The question guiding this chapter}, titlerule=0mm, toprule=.15mm, toptitle=1mm]
+
+In mechanics, we can vary a \emph{trajectory} and ask which trajectory
+makes an action stationary. In variational inference, we vary a
+\emph{probability distribution} and ask which distribution minimizes an
+objective.
+
+\textbf{``Variational'' identifies what we are doing: optimizing over
+functions, here probability densities. It does not mean ``variance.''}
+
+\end{tcolorbox}
+
+This chapter assumes familiarity with derivatives, integrals, Gaussian
+distributions, and the basic idea of conditional probability. No
+previous knowledge of functional derivatives is required. The optional
+derivation near the end introduces them when they become useful.
+
+We will move through sixteen small steps. Our running example is a noisy
+thermometer connected to a controller: the sensor reports a temperature,
+while the actual room temperature remains uncertain. We first study
+inference with the observation held fixed; controlling the heater comes
+later.
+
+By the end, you should be able to explain what is varied, derive the
+free-energy identity, and distinguish an external state from a
+distribution over that state.
+
+\section{1. Start with ordinary
+optimization}\label{start-with-ordinary-optimization}
+
+Suppose we want to minimize
+
+\[
+f(x)=(x-3)^2.
+\]
+
+We vary the number \(x\). Differentiating gives
+
+\[
+f'(x)=2(x-3)=0
+\quad\Longrightarrow\quad x^*=3.
+\]
+
+Because \(f''(x)=2>0\), this stationary point is a minimum. We write
+
+\[
+x^*=\arg\min_x f(x).
+\]
+
+The notation \(\arg\min\) asks for the \emph{input} that minimizes a
+quantity. Here the minimizing input is \(3\), whereas the minimum value
+of the function is \(f(3)=0\).
+
+Now change the question. Instead of choosing one number, suppose we must
+choose a whole curve joining two fixed points. Which curve is shortest?
+
+For a curve written as \(y(x)\) between \(x=a\) and \(x=b\), its length
+is
+
+\[
+L[y]=\int_a^b \sqrt{1+[y'(x)]^2}\,dx.
+\]
+
+Each candidate curve has one length. Thus \(L\) takes a
+\textbf{function} as input and returns a \textbf{number}. Such an object
+is called a \emph{functional}.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Problem
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Adjustable object
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Objective
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Ordinary optimization & A number \(x\) & A function \(f(x)\) \\
+Shortest-curve problem & A whole curve \(y(x)\) & A functional
+\(L[y]\) \\
+Variational inference & A probability density \(q(\eta)\) & A functional
+\(F[q]\) \\
+\end{longtable}
+}
+
+Square brackets help signal that the input is an entire function. They
+are a notational convention, not a new mathematical operation.
+
+\section{2. What is a variation?}\label{what-is-a-variation}
+
+Take a candidate curve \(y(x)\) and deform it slightly:
+
+\[
+y_\epsilon(x)=y(x)+\epsilon h(x).
+\]
+
+Here \(h(x)\) describes the \emph{shape} of the deformation, and the
+small number \(\epsilon\) controls its size. To preserve the endpoints,
+require \(h(a)=h(b)=0\).
+
+For each deformation shape, we ask how the length changes:
+
+\[
+\left.\frac{d}{d\epsilon}L[y+\epsilon h]\right|_{\epsilon=0}.
+\]
+
+This is the \textbf{first variation} in the direction \(h\). At a smooth
+unconstrained minimum, it vanishes for every admissible direction: there
+is no first-order improvement available.
+
+The same idea appears in classical mechanics:
+
+\[
+S[x]=\int_{t_0}^{t_1}\mathcal L(x,\dot x,t)\,dt,
+\qquad \delta S=0.
+\]
+
+The Euler--Lagrange equations follow by requiring stationarity under
+small changes of the path with fixed endpoints. This calculus of
+variations is the mathematical origin of the terminology we are
+learning.
+
+\begin{tcolorbox}[enhanced jigsaw, arc=.35mm, bottomrule=.15mm, bottomtitle=1mm, breakable, colback=white, colbacktitle=quarto-callout-important-color!10!white, colframe=quarto-callout-important-color-frame, coltitle=black, left=2mm, leftrule=.75mm, opacityback=0, opacitybacktitle=0.6, rightrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Stationary does not always mean minimum}, titlerule=0mm, toprule=.15mm, toptitle=1mm]
+
+The condition \(\delta S=0\) means the first variation vanishes. A
+stationary action need not be a minimum; it can be a saddle. We will
+establish a minimum for variational free energy using the non-negativity
+of KL divergence.
+
+\end{tcolorbox}
+
+\section{3. Enter Bayesian inference}\label{enter-bayesian-inference}
+
+Our thermometer displays
+
+\[
+s=17^\circ\mathrm C.
+\]
+
+The true temperature \(\eta\) is hidden. Because the measurement is
+noisy, the observation does not imply \(\eta=17^\circ\mathrm C\)
+exactly.
+
+A \textbf{generative model} specifies how hidden states and observations
+are related:
+
+\[
+p(s,\eta)=p(s\mid\eta)p(\eta).
+\]
+
+The prior \(p(\eta)\) describes temperature uncertainty before
+incorporating this reading. The likelihood \(p(s\mid\eta)\) describes
+the sensor: if the room had temperature \(\eta\), how probable would
+different readings be?
+
+Bayes' rule gives the posterior:
+
+\[
+p(\eta\mid s)=\frac{p(s,\eta)}{p(s)},
+\qquad
+p(s)=\int p(s,\eta)\,d\eta.
+\]
+
+The denominator is called the \textbf{model evidence} or
+\textbf{marginal likelihood}. It normalizes the posterior so that its
+integral over \(\eta\) equals one.
+
+For one Gaussian temperature variable, this integral is easy. For many
+interacting hidden variables in a nonlinear model, it can become
+prohibitively difficult. Our simple thermometer will let us learn the
+method in a setting where we can check the answer exactly.
+
+\section{4. Introduce an adjustable candidate
+distribution}\label{introduce-an-adjustable-candidate-distribution}
+
+Rather than directly calculating the posterior, introduce a candidate
+density
+
+\[
+q(\eta).
+\]
+
+We adjust it to approximate \(p(\eta\mid s)\). This candidate is the
+\textbf{variational density}.
+
+Think of \(q\) as a flexible probability curve. We can move its peak,
+change its width, or---if our chosen family permits---change its shape
+more substantially.
+
+Unlike an arbitrary curve, a probability density must obey
+
+\[
+q(\eta)\geq 0,
+\qquad
+\int q(\eta)\,d\eta=1.
+\]
+
+A small variation therefore has the form
+
+\[
+q_\epsilon(\eta)=q(\eta)+\epsilon h(\eta),
+\qquad \int h(\eta)\,d\eta=0,
+\]
+
+with \(\epsilon\) and \(h\) also chosen to preserve non-negativity. We
+can redistribute probability, but we cannot create or destroy its total
+mass.
+
+\section{5. What exactly is being
+varied?}\label{what-exactly-is-being-varied}
+
+The distinction is subtle but essential:
+
+\[
+\underbrace{\eta}_{\text{possible temperature}}
+\qquad\text{versus}\qquad
+\underbrace{q(\eta)}_{\text{density over possible temperatures}}.
+\]
+
+When we integrate over \(\eta\), we scan the possible temperatures
+within \emph{one} distribution. When we vary \(q\), we change how
+probability is allocated across those temperatures.
+
+For example, changing from a broad distribution near
+\(22^\circ\mathrm C\) to a narrow distribution near
+\(18^\circ\mathrm C\) changes both an estimate and its uncertainty. It
+does not itself cool the room.
+
+\begin{tcolorbox}[enhanced jigsaw, arc=.35mm, bottomrule=.15mm, bottomtitle=1mm, breakable, colback=white, colbacktitle=quarto-callout-tip-color!10!white, colframe=quarto-callout-tip-color-frame, coltitle=black, left=2mm, leftrule=.75mm, opacityback=0, opacitybacktitle=0.6, rightrule=.15mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Pause and check}, titlerule=0mm, toprule=.15mm, toptitle=1mm]
+
+If the room stays at the same temperature while the controller becomes
+more certain about it, what changes?
+
+The physical temperature \(\eta\) can stay fixed while the density
+\(q(\eta)\) becomes narrower. Inference changes a representation of the
+world.
+
+\end{tcolorbox}
+
+\section{6. In practice, choose a family of
+distributions}\label{in-practice-choose-a-family-of-distributions}
+
+Optimizing over every conceivable density is usually impractical.
+Instead, choose a family \(\mathcal Q\).
+
+For example,
+
+\[
+q_\theta(\eta)=\mathcal N(\eta;m,v),
+\qquad \theta=(m,v),\quad v>0.
+\]
+
+We use \(m\) for the mean and \(v\) for the \textbf{variance}, so the
+standard deviation is \(\sqrt v\). Each pair \((m,v)\) specifies an
+entire Gaussian density.
+
+Changing \(m\) slides the curve. Changing \(v\) changes its width. A
+computer can therefore optimize a two-dimensional parameter vector
+rather than an unrestricted function.
+
+\[
+\min_{q\in\mathcal Q}F[q]
+\quad\longleftrightarrow\quad
+\min_{m,\,v>0}F[q_{m,v}].
+\]
+
+This remains variational inference: the parameters select the candidate
+density. Ordinary parameter optimization is how we implement the
+variational problem.
+
+The choice of family matters. A single Gaussian cannot exactly represent
+a posterior with two separated peaks. Even perfect optimization cannot
+remove that limitation. This family-based approach is central to the
+account in \href{https://arxiv.org/abs/1601.00670}{Blei, Kucukelbir, and
+McAuliffe's review}.
+
+\section{7. Connect the parameters to internal
+states}\label{connect-the-parameters-to-internal-states}
+
+In Free Energy Principle literature, you will often encounter
+
+\[
+q_\mu(\eta),
+\]
+
+where \(\mu\) denotes internal states that parameterize a density over
+external states \(\eta\).
+
+Here \(\mu\) need not be a scalar mean. It can be a vector whose
+components specify several distribution parameters, possibly through a
+nonlinear mapping \(\theta=\theta(\mu)\).
+
+For example, a model could use two internal coordinates:
+
+\[
+\mu=(\mu_1,\mu_2),
+\qquad m=\mu_1,
+\qquad v=e^{\mu_2}.
+\]
+
+The exponential ensures positive variance. A physical change in \(\mu\)
+then corresponds, under this specified mapping, to a change in the
+candidate distribution.
+
+\begin{tcolorbox}[enhanced jigsaw, arc=.35mm, bottomrule=.15mm, bottomtitle=1mm, breakable, colback=white, colbacktitle=quarto-callout-note-color!10!white, colframe=quarto-callout-note-color-frame, coltitle=black, left=2mm, leftrule=.75mm, opacityback=0, opacitybacktitle=0.6, rightrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{A mathematical representation needs justification}, titlerule=0mm, toprule=.15mm, toptitle=1mm]
+
+Writing \(q_\mu\) defines a way to represent distributions using
+internal states. It does not by itself prove that an arbitrary
+thermostat performs Bayesian inference. To make that claim, we must also
+justify the representation and its relation to the system's dynamics.
+Neither the notation nor the existence of a Markov blanket alone
+establishes posterior matching.
+
+\end{tcolorbox}
+
+\section{8. Give the candidate a score: KL
+divergence}\label{give-the-candidate-a-score-kl-divergence}
+
+We need a measure of how well \(q\) approximates the posterior. A
+standard choice is
+
+\[
+D_{\mathrm{KL}}\!\left(q\,\Vert\,p(\cdot\mid s)\right)
+=\int q(\eta)\ln\frac{q(\eta)}{p(\eta\mid s)}\,d\eta.
+\]
+
+This is an average log density ratio, with the averaging performed under
+\(q\). It satisfies
+
+\[
+D_{\mathrm{KL}}\geq 0,
+\]
+
+with equality precisely when the two distributions agree almost
+everywhere. ``Almost everywhere'' permits differences on sets of zero
+measure, which do not change probabilities.
+
+KL divergence is not a geometric distance: it is generally asymmetric.
+The direction used here, \(D_{\mathrm{KL}}(q\Vert p)\), matters.
+
+We would therefore like to solve
+
+\[
+q^*=\arg\min_{q\in\mathcal Q}
+D_{\mathrm{KL}}\!\left(q\Vert p(\cdot\mid s)\right).
+\]
+
+Assume throughout that \(p(s)>0\) and that the relevant integrals are
+finite. If \(q\) assigns positive probability where the posterior is
+zero, this KL divergence is infinite.
+
+\section{9. Remove the difficult posterior
+normalization}\label{remove-the-difficult-posterior-normalization}
+
+There is an apparent obstacle: our score contains the posterior we were
+trying to avoid computing.
+
+Use Bayes' rule inside the logarithm:
+
+\[
+\ln p(\eta\mid s)=\ln p(s,\eta)-\ln p(s).
+\]
+
+Substituting gives
+
+\[
+\begin{aligned}
+D_{\mathrm{KL}}\!\left(q\Vert p(\cdot\mid s)\right)
+&=\int q(\eta)
+\left[\ln q(\eta)-\ln p(s,\eta)+\ln p(s)\right]d\eta\\
+&=\int q(\eta)\left[\ln q(\eta)-\ln p(s,\eta)\right]d\eta
++\ln p(s)\underbrace{\int q(\eta)d\eta}_{1}.
+\end{aligned}
+\]
+
+Define \textbf{variational free energy} by
+
+\begin{equation}\protect\phantomsection\label{eq-vfe-definition}{
+\boxed{
+F[q;s]=\int q(\eta)\left[\ln q(\eta)-\ln p(s,\eta)\right]d\eta.
+}
+}\end{equation}
+
+The semicolon emphasizes that \(s\) is held fixed while \(q\) varies. We
+will sometimes abbreviate this as \(F[q]\).
+
+Using expectation notation, the same definition is
+
+\[
+F[q;s]=\mathbb E_q\!\left[\ln q(\eta)-\ln p(s,\eta)\right].
+\]
+
+We have removed the posterior's evidence denominator from the objective.
+Evaluating or estimating expectations under \(q\) may still require
+work; the transformation does not make every inference problem easy.
+
+\section{10. Understand the key
+identity}\label{understand-the-key-identity}
+
+Rearranging the previous calculation yields
+
+\begin{equation}\protect\phantomsection\label{eq-vfe-identity}{
+\boxed{
+F[q;s]
+=\underbrace{D_{\mathrm{KL}}\!\left(q\Vert p(\cdot\mid s)\right)}_{\text{approximation gap}}
++\underbrace{[-\ln p(s)]}_{\text{surprisal of the fixed observation}}.
+}
+}\end{equation}
+
+For fixed \(s\) and a fixed model, \(-\ln p(s)\) is a constant with
+respect to \(q\). Therefore
+
+\[
+\arg\min_{q\in\mathcal Q}F[q;s]
+=\arg\min_{q\in\mathcal Q}D_{\mathrm{KL}}\!\left(q\Vert p(\cdot\mid s)\right).
+\]
+
+This is the payoff: \textbf{we can optimize an objective built from the
+joint model and our candidate density, and thereby improve the posterior
+approximation.}
+
+Non-negativity of KL also gives
+
+\[
+F[q;s]\geq-\ln p(s).
+\]
+
+Free energy is an \textbf{upper bound} on surprisal. The gap closes when
+\(q\) equals the posterior. If \(\mathcal Q\) excludes the posterior,
+even its best member leaves a positive gap. A numerical optimizer can
+also stop short of the best member.
+
+Machine-learning texts often maximize the \textbf{evidence lower bound},
+or ELBO:
+
+\[
+\operatorname{ELBO}[q;s]=-F[q;s]\leq\ln p(s).
+\]
+
+These are the same optimization with opposite signs.
+
+\begin{tcolorbox}[enhanced jigsaw, arc=.35mm, bottomrule=.15mm, bottomtitle=1mm, breakable, colback=white, colbacktitle=quarto-callout-important-color!10!white, colframe=quarto-callout-important-color-frame, coltitle=black, left=2mm, leftrule=.75mm, opacityback=0, opacitybacktitle=0.6, rightrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{What does inference improve?}, titlerule=0mm, toprule=.15mm, toptitle=1mm]
+
+During this optimization, the observation and model are fixed. Improving
+\(q\) decreases the approximation gap; it does \textbf{not} increase
+\(p(s)\) or make the recorded observation less surprising. Model
+learning and action can change other quantities, but they are different
+optimization problems.
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[enhanced jigsaw, arc=.35mm, bottomrule=.15mm, bottomtitle=1mm, breakable, colback=white, colbacktitle=quarto-callout-note-color!10!white, colframe=quarto-callout-note-color-frame, coltitle=black, left=2mm, leftrule=.75mm, opacityback=0, opacitybacktitle=0.6, rightrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{A note on continuous densities and units}, titlerule=0mm, toprule=.15mm, toptitle=1mm]
+
+We use natural logarithms, giving information quantities in nats. For
+continuous temperatures, \(p(s)\) is a density, not the probability of
+one exact real number. Density-based surprisal depends on the
+measurement coordinates and can be negative. Throughout, we use fixed
+coordinates and reference measures---temperature expressed numerically
+in degrees Celsius in the example. KL divergence between distributions
+is invariant under a common invertible coordinate transformation.
+
+\end{tcolorbox}
+
+\section{11. Why call it ``free
+energy''?}\label{why-call-it-free-energy}
+
+Introduce the entropy of \(q\):
+
+\[
+H[q]=-\mathbb E_q[\ln q(\eta)].
+\]
+
+For a continuous density this is \emph{differential entropy}. Our
+definition becomes
+
+\[
+F[q;s]=\underbrace{\mathbb E_q[-\ln p(s,\eta)]}_{\text{expected energy-like quantity}}-H[q].
+\]
+
+This resembles the Helmholtz free energy of thermodynamics,
+
+\[
+A=U-TS.
+\]
+
+We can make the correspondence explicit for a canonical ensemble.
+Suppose physical microstates \(\eta\) have energy \(E(\eta)\) and
+equilibrium density
+
+\[
+p_{\mathrm{eq}}(\eta)=\frac{e^{-\beta E(\eta)}}{Z},
+\qquad\beta=\frac{1}{k_B T}.
+\]
+
+For an admissible trial density \(q\), define
+
+\[
+\mathcal A[q]=\mathbb E_q[E]-T k_B H[q].
+\]
+
+Substituting \(\ln p_{\mathrm{eq}}=-\beta E-\ln Z\) into KL divergence
+gives
+
+\[
+\begin{aligned}
+k_B T D_{\mathrm{KL}}(q\Vert p_{\mathrm{eq}})
+&=\mathbb E_q[E]-k_B T H[q]+k_B T\ln Z\\
+&=\mathcal A[q]-A_{\mathrm{eq}},
+\end{aligned}
+\]
+
+where \(A_{\mathrm{eq}}=-k_B T\ln Z\). Thus the equilibrium density
+minimizes this thermodynamic free-energy functional, just as the
+posterior minimizes variational free energy.
+
+The shared mathematical structure explains the terminology. However,
+\(-\ln p(s,\eta)\) in an inference model is generally not a physical
+Hamiltonian. \textbf{Variational free energy is not automatically an
+amount of energy in joules stored in a brain or controller.}
+
+\section{\texorpdfstring{12. Why specifically \emph{variational} free
+energy?}{12. Why specifically variational free energy?}}\label{why-specifically-variational-free-energy}
+
+We can now unpack the name precisely:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Term
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Meaning
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Variational density \(q\) & The adjustable probability distribution \\
+Variational free energy \(F[q;s]\) & The functional used to score it \\
+Variational inference & Optimizing that functional over an allowed
+family \\
+\end{longtable}
+}
+
+A second decomposition is useful in Active Inference. Factor
+\(p(s,\eta)=p(s\mid\eta)p(\eta)\) in Equation~\ref{eq-vfe-definition}:
+
+\[
+\begin{aligned}
+F[q;s]
+&=\mathbb E_q[\ln q(\eta)-\ln p(\eta)-\ln p(s\mid\eta)]\\
+&=\underbrace{D_{\mathrm{KL}}(q\Vert p(\eta))}_{\text{complexity}}
+-\underbrace{\mathbb E_q[\ln p(s\mid\eta)]}_{\text{accuracy}}.
+\end{aligned}
+\]
+
+Accuracy rewards candidate states that explain the observation.
+Complexity measures departure from the \textbf{prior}, not necessarily
+from the previous time step's belief. These terms jointly produce
+posterior inference; the complexity term is not an arbitrary prohibition
+on changing one's mind.
+
+\section{13. Work through the thermometer
+numerically}\label{work-through-the-thermometer-numerically}
+
+Let temperatures be represented by their numerical values in degrees
+Celsius. Choose
+
+\[
+p(\eta)=\mathcal N(\eta;m_0,v_0),
+\qquad m_0=22,\quad v_0=4,
+\]
+
+and a sensor model
+
+\[
+p(s\mid\eta)=\mathcal N(s;\eta,r),
+\qquad r=1,\quad s=17.
+\]
+
+The prior standard deviation is \(2^\circ\mathrm C\) and the
+sensor-noise standard deviation is \(1^\circ\mathrm C\). The variances
+have units of squared degrees Celsius.
+
+Choose the variational family
+
+\[
+q(\eta)=\mathcal N(\eta;m,v).
+\]
+
+\subsection{First compute the
+objective}\label{first-compute-the-objective}
+
+For a Gaussian, \(H[q]=\tfrac12\ln(2\pi e v)\). Also,
+
+\[
+\mathbb E_q[(s-\eta)^2]=(s-m)^2+v,
+\]
+
+because the expected squared deviation includes both the squared
+displacement of the mean and the variance. Similarly,
+
+\[
+\mathbb E_q[(\eta-m_0)^2]=(m-m_0)^2+v.
+\]
+
+Substitution into the free-energy definition gives
+
+\begin{equation}\protect\phantomsection\label{eq-vfe-gaussian}{
+\boxed{
+\begin{aligned}
+F(m,v;s)={}&\frac12\ln(2\pi r)
++\frac{(s-m)^2+v}{2r}\\
+&+\frac12\ln(2\pi v_0)
++\frac{(m-m_0)^2+v}{2v_0}\\
+&-\frac12\ln(2\pi e v).
+\end{aligned}
+}
+}\end{equation}
+
+The first line comes from the likelihood, the second from the prior, and
+the last from negative entropy. Keeping the constants lets us check the
+absolute free-energy bound, not only its gradients.
+
+\subsection{Then vary the mean and
+variance}\label{then-vary-the-mean-and-variance}
+
+Differentiate with respect to \(m\):
+
+\[
+\frac{\partial F}{\partial m}
+=\frac{m-s}{r}+\frac{m-m_0}{v_0}=0.
+\]
+
+Solving gives
+
+\[
+m^*=\frac{s/r+m_0/v_0}{1/r+1/v_0}=18.
+\]
+
+This is a \textbf{precision-weighted average}: precision is inverse
+variance. The more precise sensor receives greater weight than the
+prior.
+
+For the variance,
+
+\[
+\frac{\partial F}{\partial v}
+=\frac{1}{2r}+\frac{1}{2v_0}-\frac{1}{2v}=0,
+\]
+
+so
+
+\[
+v^*=\left(\frac1r+\frac1{v_0}\right)^{-1}=0.8.
+\]
+
+The second derivatives are positive, and there is no mixed derivative:
+
+\[
+\frac{\partial^2F}{\partial m^2}=\frac1r+\frac1{v_0}>0,
+\qquad
+\frac{\partial^2F}{\partial v^2}=\frac{1}{2v^2}>0.
+\]
+
+These stationary values give the unique minimum for \(v>0\).
+
+The posterior of this Gaussian model is exactly
+
+\[
+p(\eta\mid s)=\mathcal N(\eta;18,0.8).
+\]
+
+Because our family contains it, the optimum reaches the posterior.
+Notice that the answer is centered at \textbf{18}, not at the sensor
+reading \textbf{17}: inference combines prior information with the
+observation.
+
+\subsection{Watch the approximation
+improve}\label{watch-the-approximation-improve}
+
+The evidence is \(p(s)=\mathcal N(s;m_0,v_0+r)\), giving
+
+\[
+-\ln p(s)=\frac12\ln(2\pi\cdot5)+\frac{(17-22)^2}{2\cdot5}
+\approx4.224.
+\]
+
+The following candidates illustrate simultaneous changes in mean and
+uncertainty. They are illustrative choices, not the output of a
+specified learning algorithm.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lrrrr@{}}
+\toprule\noalign{}
+Candidate & Mean \(m\) & Variance \(v\) & \(F[q;s]\) & Posterior KL
+gap \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Initial, equal to prior & 22 & 4 & 15.419 & 11.195 \\
+Intermediate & 20 & 2 & 7.016 & 2.792 \\
+Near posterior & 18.5 & 1 & 4.393 & 0.170 \\
+Exact posterior & 18 & 0.8 & 4.224 & 0 \\
+\end{longtable}
+}
+
+Every row satisfies \(F=-\ln p(s)+D_{\mathrm{KL}}\). The evidence is
+fixed throughout.
+
+\begin{figure}
+
+\centering{
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ImportTok{import}\NormalTok{ numpy }\ImportTok{as}\NormalTok{ np}
+\ImportTok{import}\NormalTok{ matplotlib.pyplot }\ImportTok{as}\NormalTok{ plt}
+
+\NormalTok{prior\_mean, prior\_var }\OperatorTok{=} \FloatTok{22.0}\NormalTok{, }\FloatTok{4.0}
+\NormalTok{observation, noise\_var }\OperatorTok{=} \FloatTok{17.0}\NormalTok{, }\FloatTok{1.0}
+\NormalTok{posterior\_var }\OperatorTok{=} \FloatTok{1.0} \OperatorTok{/}\NormalTok{ (}\FloatTok{1.0} \OperatorTok{/}\NormalTok{ noise\_var }\OperatorTok{+} \FloatTok{1.0} \OperatorTok{/}\NormalTok{ prior\_var)}
+\NormalTok{posterior\_mean }\OperatorTok{=}\NormalTok{ posterior\_var }\OperatorTok{*}\NormalTok{ (}
+\NormalTok{    observation }\OperatorTok{/}\NormalTok{ noise\_var }\OperatorTok{+}\NormalTok{ prior\_mean }\OperatorTok{/}\NormalTok{ prior\_var}
+\NormalTok{)}
+
+\KeywordTok{def}\NormalTok{ normal\_pdf(x, mean, variance):}
+    \CommentTok{"""Evaluate a normalized Gaussian density with the given variance."""}
+    \ControlFlowTok{return}\NormalTok{ np.exp(}\OperatorTok{{-}}\FloatTok{0.5} \OperatorTok{*}\NormalTok{ (x }\OperatorTok{{-}}\NormalTok{ mean)}\OperatorTok{**}\DecValTok{2} \OperatorTok{/}\NormalTok{ variance) }\OperatorTok{/}\NormalTok{ np.sqrt(}
+        \FloatTok{2.0} \OperatorTok{*}\NormalTok{ np.pi }\OperatorTok{*}\NormalTok{ variance}
+\NormalTok{    )}
+
+\KeywordTok{def}\NormalTok{ free\_energy(mean, variance):}
+    \CommentTok{"""Evaluate the full Gaussian variational objective for fixed data."""}
+\NormalTok{    likelihood\_term }\OperatorTok{=} \FloatTok{0.5} \OperatorTok{*}\NormalTok{ np.log(}\FloatTok{2.0} \OperatorTok{*}\NormalTok{ np.pi }\OperatorTok{*}\NormalTok{ noise\_var)}
+\NormalTok{    likelihood\_term }\OperatorTok{+=}\NormalTok{ ((observation }\OperatorTok{{-}}\NormalTok{ mean)}\OperatorTok{**}\DecValTok{2} \OperatorTok{+}\NormalTok{ variance) }\OperatorTok{/}\NormalTok{ (}\DecValTok{2} \OperatorTok{*}\NormalTok{ noise\_var)}
+\NormalTok{    prior\_term }\OperatorTok{=} \FloatTok{0.5} \OperatorTok{*}\NormalTok{ np.log(}\FloatTok{2.0} \OperatorTok{*}\NormalTok{ np.pi }\OperatorTok{*}\NormalTok{ prior\_var)}
+\NormalTok{    prior\_term }\OperatorTok{+=}\NormalTok{ ((mean }\OperatorTok{{-}}\NormalTok{ prior\_mean)}\OperatorTok{**}\DecValTok{2} \OperatorTok{+}\NormalTok{ variance) }\OperatorTok{/}\NormalTok{ (}\DecValTok{2} \OperatorTok{*}\NormalTok{ prior\_var)}
+\NormalTok{    entropy }\OperatorTok{=} \FloatTok{0.5} \OperatorTok{*}\NormalTok{ np.log(}\FloatTok{2.0} \OperatorTok{*}\NormalTok{ np.pi }\OperatorTok{*}\NormalTok{ np.e }\OperatorTok{*}\NormalTok{ variance)}
+    \ControlFlowTok{return}\NormalTok{ likelihood\_term }\OperatorTok{+}\NormalTok{ prior\_term }\OperatorTok{{-}}\NormalTok{ entropy}
+
+\NormalTok{surprisal }\OperatorTok{=} \FloatTok{0.5} \OperatorTok{*}\NormalTok{ np.log(}\DecValTok{2} \OperatorTok{*}\NormalTok{ np.pi }\OperatorTok{*}\NormalTok{ (prior\_var }\OperatorTok{+}\NormalTok{ noise\_var))}
+\NormalTok{surprisal }\OperatorTok{+=}\NormalTok{ (observation }\OperatorTok{{-}}\NormalTok{ prior\_mean)}\OperatorTok{**}\DecValTok{2} \OperatorTok{/}\NormalTok{ (}\DecValTok{2} \OperatorTok{*}\NormalTok{ (prior\_var }\OperatorTok{+}\NormalTok{ noise\_var))}
+
+\NormalTok{temperatures }\OperatorTok{=}\NormalTok{ np.linspace(}\DecValTok{12}\NormalTok{, }\DecValTok{29}\NormalTok{, }\DecValTok{700}\NormalTok{)}
+\NormalTok{candidates }\OperatorTok{=}\NormalTok{ [(}\DecValTok{22}\NormalTok{, }\DecValTok{4}\NormalTok{), (}\DecValTok{20}\NormalTok{, }\DecValTok{2}\NormalTok{), (}\FloatTok{18.5}\NormalTok{, }\DecValTok{1}\NormalTok{), (posterior\_mean, posterior\_var)]}
+\NormalTok{colors }\OperatorTok{=}\NormalTok{ [}\StringTok{"\#9b4f00"}\NormalTok{, }\StringTok{"\#6d55a3"}\NormalTok{, }\StringTok{"\#2879a8"}\NormalTok{, }\StringTok{"\#087f5b"}\NormalTok{]}
+\NormalTok{styles }\OperatorTok{=}\NormalTok{ [}\StringTok{"{-}{-}"}\NormalTok{, }\StringTok{"{-}."}\NormalTok{, }\StringTok{":"}\NormalTok{, }\StringTok{"{-}"}\NormalTok{]}
+
+\NormalTok{fig, axes }\OperatorTok{=}\NormalTok{ plt.subplots(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, figsize}\OperatorTok{=}\NormalTok{(}\DecValTok{11}\NormalTok{, }\FloatTok{4.3}\NormalTok{), constrained\_layout}\OperatorTok{=}\VariableTok{True}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{ (mean, variance), color, style }\KeywordTok{in} \BuiltInTok{zip}\NormalTok{(candidates, colors, styles):}
+\NormalTok{    axes[}\DecValTok{0}\NormalTok{].plot(}
+\NormalTok{        temperatures, normal\_pdf(temperatures, mean, variance),}
+\NormalTok{        color}\OperatorTok{=}\NormalTok{color, linestyle}\OperatorTok{=}\NormalTok{style, linewidth}\OperatorTok{=}\FloatTok{2.2}\NormalTok{,}
+\NormalTok{        label}\OperatorTok{=}\SpecialStringTok{f"m = }\SpecialCharTok{\{}\NormalTok{mean}\SpecialCharTok{:g\}}\SpecialStringTok{, v = }\SpecialCharTok{\{}\NormalTok{variance}\SpecialCharTok{:g\}}\SpecialStringTok{"}\NormalTok{,}
+\NormalTok{    )}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].axvline(observation, color}\OperatorTok{=}\StringTok{"0.5"}\NormalTok{, linestyle}\OperatorTok{=}\StringTok{":"}\NormalTok{, linewidth}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].}\BuiltInTok{set}\NormalTok{(xlabel}\OperatorTok{=}\StringTok{"Possible temperature η (°C)"}\NormalTok{, ylabel}\OperatorTok{=}\StringTok{"Density (1/°C)"}\NormalTok{,}
+\NormalTok{            title}\OperatorTok{=}\StringTok{"Changing a whole distribution"}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].legend(frameon}\OperatorTok{=}\VariableTok{False}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{9}\NormalTok{)}
+
+\NormalTok{means }\OperatorTok{=}\NormalTok{ np.linspace(}\DecValTok{14}\NormalTok{, }\DecValTok{23}\NormalTok{, }\DecValTok{400}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].plot(means, free\_energy(means, posterior\_var), color}\OperatorTok{=}\StringTok{"\#2879a8"}\NormalTok{,}
+\NormalTok{             linewidth}\OperatorTok{=}\FloatTok{2.5}\NormalTok{, label}\OperatorTok{=}\StringTok{"F(m, v = 0.8)"}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].axhline(surprisal, color}\OperatorTok{=}\StringTok{"\#087f5b"}\NormalTok{, linestyle}\OperatorTok{=}\StringTok{"{-}{-}"}\NormalTok{,}
+\NormalTok{                label}\OperatorTok{=}\StringTok{"Fixed bound: −ln p(s)"}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].scatter([posterior\_mean], [surprisal], color}\OperatorTok{=}\StringTok{"\#087f5b"}\NormalTok{, zorder}\OperatorTok{=}\DecValTok{3}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].}\BuiltInTok{set}\NormalTok{(xlabel}\OperatorTok{=}\StringTok{"Candidate mean m (°C)"}\NormalTok{, ylabel}\OperatorTok{=}\StringTok{"Free energy (nats)"}\NormalTok{,}
+\NormalTok{            title}\OperatorTok{=}\StringTok{"A slice through the objective"}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].legend(frameon}\OperatorTok{=}\VariableTok{False}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{9}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{ ax }\KeywordTok{in}\NormalTok{ axes:}
+\NormalTok{    ax.spines[[}\StringTok{"top"}\NormalTok{, }\StringTok{"right"}\NormalTok{]].set\_visible(}\VariableTok{False}\NormalTok{)}
+\NormalTok{    ax.grid(alpha}\OperatorTok{=}\FloatTok{0.15}\NormalTok{)}
+\NormalTok{plt.show()}
+\end{Highlighting}
+\end{Shaded}
+
+}
+
+\caption{\label{fig-varying-density}}
+
+\end{figure}%
+
+\subsection{What if the family is too
+restricted?}\label{what-if-the-family-is-too-restricted}
+
+Suppose we fix \(v=4\) and vary only the mean. The best mean is still
+\(18\), but \(q=\mathcal N(18,4)\) remains too broad. Its residual KL
+divergence is
+
+\[
+\frac12\left[\frac{4}{0.8}-1-\ln\frac{4}{0.8}\right]
+\approx1.195\ \text{nats}.
+\]
+
+Matching the posterior mean is not the same as matching the posterior
+distribution.
+
+\section{14. Make the word ``variation''
+tangible}\label{make-the-word-variation-tangible}
+
+Imagine a flexible sheet whose shape represents a density. You adjust
+the sheet and evaluate a score. If the score falls, the new shape is a
+better candidate.
+
+Unlike an unconstrained rubber sheet, this one must stay nonnegative and
+enclose unit area. Its permitted shapes depend on your family
+\(\mathcal Q\). A Gaussian family permits shifting and stretching a
+single bell-shaped curve.
+
+The analogy identifies three separate ingredients: a deformable object
+\(q\), admissible deformations, and a scalar score \(F[q;s]\). The
+following optional calculation turns that picture into calculus.
+
+\begin{tcolorbox}[enhanced jigsaw, arc=.35mm, bottomrule=.15mm, bottomtitle=1mm, breakable, colback=white, colbacktitle=quarto-callout-note-color!10!white, colframe=quarto-callout-note-color-frame, coltitle=black, left=2mm, leftrule=.75mm, opacityback=0, opacitybacktitle=0.6, rightrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Optional: minimize over the full density}, titlerule=0mm, toprule=.15mm, toptitle=1mm]
+
+Instead of assuming Gaussian form, minimize \(F[q;s]\) over normalized
+densities on the posterior support. Introduce a Lagrange multiplier
+\(\lambda\) for normalization:
+
+\[
+\mathcal J[q]=F[q;s]+\lambda\left(\int q(\eta)d\eta-1\right).
+\]
+
+Perturb \(q\) to \(q+\epsilon h\). Since \(d(q\ln q)/dq=\ln q+1\), the
+first variation is
+
+\[
+\left.\frac{d\mathcal J[q+\epsilon h]}{d\epsilon}\right|_{\epsilon=0}
+=\int h(\eta)\left[\ln q(\eta)+1-\ln p(s,\eta)+\lambda\right]d\eta.
+\]
+
+For this to vanish for arbitrary admissible perturbations in the
+interior of the support, the bracket must vanish:
+
+\[
+\frac{\delta\mathcal J}{\delta q(\eta)}
+=\ln q(\eta)+1-\ln p(s,\eta)+\lambda=0.
+\]
+
+The expression \(\delta\mathcal J/\delta q(\eta)\) is the
+\textbf{functional derivative}. It describes sensitivity to changing the
+density at each location \(\eta\).
+
+Rearranging,
+
+\[
+q^*(\eta)=e^{-1-\lambda}p(s,\eta).
+\]
+
+Normalization requires
+
+\[
+1=e^{-1-\lambda}\int p(s,\eta)d\eta
+=e^{-1-\lambda}p(s).
+\]
+
+Therefore
+
+\[
+q^*(\eta)=\frac{p(s,\eta)}{p(s)}=p(\eta\mid s).
+\]
+
+We have recovered Bayes' rule by varying a density. The KL identity
+establishes that this stationary density is a global minimum. This
+derivation identifies the mathematical optimum; it does not supply a
+general way to compute the evidence integral.
+
+\end{tcolorbox}
+
+\section{15. Return to the Free Energy
+Principle}\label{return-to-the-free-energy-principle}
+
+Read the notation \(q_\mu(\eta)\) as:
+
+\begin{quote}
+An adjustable candidate distribution over external states, parameterized
+by internal states.
+\end{quote}
+
+For a designed inference algorithm, one possible update is gradient
+descent:
+
+\[
+\dot\mu=-\kappa\nabla_\mu F[q_\mu;s],
+\qquad\kappa>0.
+\]
+
+If \(s\) and the model stay fixed, this gives
+
+\[
+\frac{dF}{dt}
+=\nabla_\mu F\cdot\dot\mu
+=-\kappa\|\nabla_\mu F\|^2\leq0.
+\]
+
+That is a concrete example of internal-state dynamics implementing
+variational optimization. In our Gaussian example, descending in the
+mean uses
+
+\[
+\dot m=-\kappa\left[\frac{m-s}{r}+\frac{m-m_0}{v_0}\right].
+\]
+
+The two precision-weighted discrepancies pull the estimate toward the
+observation and the prior mean.
+
+This deliberately simple descent equation is not a general theorem about
+every physical system. Stochastic dynamics, changing sensory inputs, and
+solenoidal flow require additional treatment. In
+\href{https://arxiv.org/abs/2201.06387}{Friston and colleagues'
+account}, relating physical dynamics to Bayesian descriptions is a
+further argument built on assumptions about the system and its
+partition.
+
+For orientation, that paper also uses particular states
+\(\pi=(s,a,\mu)\). The corresponding free-energy identity can be written
+
+\[
+F[q_\mu;\pi]=D_{\mathrm{KL}}\!\left(q_\mu(\eta)\Vert p(\eta\mid\pi)\right)-\ln p(\pi).
+\]
+
+The algebra has the same form, but \(\mu\) now appears both in the
+density parameters and in \(\pi\). Our fixed-observation calculation
+does not by itself establish the paper's claims about gradients of
+physical states. In particular, exact identities involving a specially
+constructed density and conditional modes should not be read as saying
+that every candidate \(q_\mu\) equals the posterior.
+
+Finally, distinguish \textbf{inference} from \textbf{action}. Updating
+\(q\) revises the temperature estimate. Turning on a heater changes the
+environment and subsequent observations. To model the latter, we need a
+model of how actions affect observations and how preferred outcomes or
+viable states enter the controller's model. An inference prior centered
+at \(22^\circ\mathrm C\) alone is not a complete heating policy.
+
+Variational free energy is also distinct from \textbf{expected free
+energy}, an objective used in many Active Inference models to evaluate
+possible future policies. Understanding the present chapter provides the
+foundation for that later topic.
+
+\section{16. Keep three different objects
+separate}\label{keep-three-different-objects-separate}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Symbol
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Meaning
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Thermometer example
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\(\eta\) & The hidden state itself & Actual room temperature \\
+\(p(\eta\mid s)\) & Exact posterior under the chosen model &
+Distribution implied by prior, sensor model, and reading \\
+\(q_\mu(\eta)\) & Candidate distribution & Distribution represented by
+adjustable internal parameters \\
+\end{longtable}
+}
+
+``Exact posterior'' means exact \textbf{under the model}. It does not
+guarantee that the model correctly describes the real sensor or room.
+
+The central optimization is
+
+\[
+\boxed{
+\mu^*=\arg\min_\mu F[q_\mu;s].
+}
+\]
+
+Varying \(\mu\) varies a distribution. At a global optimum, we obtain
+the member of the allowed family with the smallest posterior KL
+divergence. If the family contains the posterior, that divergence can
+reach zero.
+
+\begin{tcolorbox}[enhanced jigsaw, arc=.35mm, bottomrule=.15mm, bottomtitle=1mm, breakable, colback=white, colbacktitle=quarto-callout-tip-color!10!white, colframe=quarto-callout-tip-color-frame, coltitle=black, left=2mm, leftrule=.75mm, opacityback=0, opacitybacktitle=0.6, rightrule=.15mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Explain it in one sentence}, titlerule=0mm, toprule=.15mm, toptitle=1mm]
+
+\textbf{Variational inference turns posterior estimation into
+optimization over probability distributions; variational free energy is
+the objective whose excess above surprisal measures the remaining
+posterior mismatch.}
+
+\end{tcolorbox}
+
+\section*{Check your understanding}\label{check-your-understanding}
+\addcontentsline{toc}{section}{Check your understanding}
+
+\markright{Check your understanding}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  In \(F[q;s]\), which object is varied and which observation is held
+  fixed?
+\item
+  Why can free energy fall while \(p(s)\) stays unchanged?
+\item
+  In the Gaussian example, why is the posterior mean \(18\) rather than
+  \(17\)?
+\item
+  If the mean is correct but the variance is too large, is inference
+  exact?
+\item
+  Does \(\delta S=0\) always mean that the action is minimized?
+\item
+  If we allow an arbitrary normalized density, what density minimizes
+  \(F\)?
+\end{enumerate}
+
+\begin{tcolorbox}[enhanced jigsaw, arc=.35mm, bottomrule=.15mm, bottomtitle=1mm, breakable, colback=white, colbacktitle=quarto-callout-note-color!10!white, colframe=quarto-callout-note-color-frame, coltitle=black, left=2mm, leftrule=.75mm, opacityback=0, opacitybacktitle=0.6, rightrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Suggested answers}, titlerule=0mm, toprule=.15mm, toptitle=1mm]
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  We vary \(q\), or the parameters selecting it. We hold \(s\) and the
+  generative model fixed.
+\item
+  The posterior KL gap falls; the surprisal term is constant.
+\item
+  The estimate combines the prior mean \(22\) and reading \(17\),
+  weighted by their precisions.
+\item
+  No.~Exact inference matches the full posterior distribution, including
+  its uncertainty.
+\item
+  No.~It expresses stationarity of the action.
+\item
+  The posterior \(p(\eta\mid s)\), subject to the support and regularity
+  conditions discussed above.
+\end{enumerate}
+
+\end{tcolorbox}
+
+\section*{Further reading}\label{further-reading}
+\addcontentsline{toc}{section}{Further reading}
+
+\markright{Further reading}
+
+\begin{itemize}
+\tightlist
+\item
+  David M. Blei, Alp Kucukelbir, and Jon D. McAuliffe (2017),
+  \href{https://arxiv.org/abs/1601.00670}{\emph{Variational Inference: A
+  Review for Statisticians}}. A systematic introduction to variational
+  families, KL minimization, and the ELBO.
+\item
+  Karl Friston, Lancelot Da Costa, Noor Sajid, Conor Heins, Kai
+  Ueltzhöffer, Grigorios A. Pavliotis, and Thomas Parr (2023),
+  \href{https://arxiv.org/abs/2201.06387}{\emph{The free energy
+  principle made simpler but not too simple}}. The connection to random
+  dynamical systems and the Bayesian interpretation of internal states;
+  the preprint first appeared in 2022.
+\end{itemize}
+
+\bookmarksetup{startatroot}
+
+\chapter{Summary}\label{summary}
+
+In summary, this book has no content whatsoever.
+
+\bookmarksetup{startatroot}
+
+\chapter*{References}\label{references}
+\addcontentsline{toc}{chapter}{References}
+
+\markboth{References}{References}
+
+\protect\phantomsection\label{refs}
+\begin{CSLReferences}{1}{1}
+\bibitem[\citeproctext]{ref-knuth84}
+Knuth, Donald E. 1984. {``Literate Programming.''} \emph{Comput. J.}
+(USA) 27 (2): 97--111. \url{https://doi.org/10.1093/comjnl/27.2.97}.
+
+\end{CSLReferences}
+
+
+
+
+\end{document}

@@ -1,0 +1,773 @@
+---
+title: "What does ‘variational’ mean?"
+subtitle: "From varying a trajectory to varying a probability distribution"
+description: "A step-by-step introduction to variational inference and variational free energy for undergraduate physics students."
+jupyter: python3
+execute:
+  echo: true
+  warning: false
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    code-summary: "Show the Python code"
+---
+
+::: {.callout-note}
+## The question guiding this chapter
+
+In mechanics, we can vary a *trajectory* and ask which trajectory makes an action stationary. In variational inference, we vary a *probability distribution* and ask which distribution minimizes an objective.
+
+**“Variational” identifies what we are doing: optimizing over functions, here probability densities. It does not mean “variance.”**
+:::
+
+This chapter assumes familiarity with derivatives, integrals, Gaussian distributions, and the basic idea of conditional probability. No previous knowledge of functional derivatives is required. The optional derivation near the end introduces them when they become useful.
+
+We will move through sixteen small steps. Our running example is a noisy thermometer connected to a controller: the sensor reports a temperature, while the actual room temperature remains uncertain. We first study inference with the observation held fixed; controlling the heater comes later.
+
+By the end, you should be able to explain what is varied, derive the free-energy identity, and distinguish an external state from a distribution over that state.
+
+## 1. Start with ordinary optimization
+
+Suppose we want to minimize
+
+$$
+f(x)=(x-3)^2.
+$$
+
+We vary the number $x$. Differentiating gives
+
+$$
+f'(x)=2(x-3)=0
+\quad\Longrightarrow\quad x^*=3.
+$$
+
+Because $f''(x)=2>0$, this stationary point is a minimum. We write
+
+$$
+x^*=\arg\min_x f(x).
+$$
+
+The notation $\arg\min$ asks for the *input* that minimizes a quantity. Here the minimizing input is $3$, whereas the minimum value of the function is $f(3)=0$.
+
+Now change the question. Instead of choosing one number, suppose we must choose a whole curve joining two fixed points. Which curve is shortest?
+
+For a curve written as $y(x)$ between $x=a$ and $x=b$, its length is
+
+$$
+L[y]=\int_a^b \sqrt{1+[y'(x)]^2}\,dx.
+$$
+
+Each candidate curve has one length. Thus $L$ takes a **function** as input and returns a **number**. Such an object is called a *functional*.
+
+| Problem | Adjustable object | Objective |
+|---|---|---|
+| Ordinary optimization | A number $x$ | A function $f(x)$ |
+| Shortest-curve problem | A whole curve $y(x)$ | A functional $L[y]$ |
+| Variational inference | A probability density $q(\eta)$ | A functional $F[q]$ |
+
+Square brackets help signal that the input is an entire function. They are a notational convention, not a new mathematical operation.
+
+## 2. What is a variation?
+
+Take a candidate curve $y(x)$ and deform it slightly:
+
+$$
+y_\epsilon(x)=y(x)+\epsilon h(x).
+$$
+
+Here $h(x)$ describes the *shape* of the deformation, and the small number $\epsilon$ controls its size. To preserve the endpoints, require $h(a)=h(b)=0$.
+
+For each deformation shape, we ask how the length changes:
+
+$$
+\left.\frac{d}{d\epsilon}L[y+\epsilon h]\right|_{\epsilon=0}.
+$$
+
+This is the **first variation** in the direction $h$. At a smooth unconstrained minimum, it vanishes for every admissible direction: there is no first-order improvement available.
+
+The same idea appears in classical mechanics:
+
+$$
+S[x]=\int_{t_0}^{t_1}\mathcal L(x,\dot x,t)\,dt,
+\qquad \delta S=0.
+$$
+
+The Euler–Lagrange equations follow by requiring stationarity under small changes of the path with fixed endpoints. This calculus of variations is the mathematical origin of the terminology we are learning.
+
+::: {.callout-important}
+## Stationary does not always mean minimum
+
+The condition $\delta S=0$ means the first variation vanishes. A stationary action need not be a minimum; it can be a saddle. We will establish a minimum for variational free energy using the non-negativity of KL divergence.
+:::
+
+## 3. Enter Bayesian inference
+
+Our thermometer displays
+
+$$
+s=17^\circ\mathrm C.
+$$
+
+The true temperature $\eta$ is hidden. Because the measurement is noisy, the observation does not imply $\eta=17^\circ\mathrm C$ exactly.
+
+A **generative model** specifies how hidden states and observations are related:
+
+$$
+p(s,\eta)=p(s\mid\eta)p(\eta).
+$$
+
+The prior $p(\eta)$ describes temperature uncertainty before incorporating this reading. The likelihood $p(s\mid\eta)$ describes the sensor: if the room had temperature $\eta$, how probable would different readings be?
+
+Bayes' rule gives the posterior:
+
+$$
+p(\eta\mid s)=\frac{p(s,\eta)}{p(s)},
+\qquad
+p(s)=\int p(s,\eta)\,d\eta.
+$$
+
+The denominator is called the **model evidence** or **marginal likelihood**. It normalizes the posterior so that its integral over $\eta$ equals one.
+
+For one Gaussian temperature variable, this integral is easy. For many interacting hidden variables in a nonlinear model, it can become prohibitively difficult. Our simple thermometer will let us learn the method in a setting where we can check the answer exactly.
+
+## 4. Introduce an adjustable candidate distribution
+
+Rather than directly calculating the posterior, introduce a candidate density
+
+$$
+q(\eta).
+$$
+
+We adjust it to approximate $p(\eta\mid s)$. This candidate is the **variational density**.
+
+Think of $q$ as a flexible probability curve. We can move its peak, change its width, or—if our chosen family permits—change its shape more substantially.
+
+Unlike an arbitrary curve, a probability density must obey
+
+$$
+q(\eta)\geq 0,
+\qquad
+\int q(\eta)\,d\eta=1.
+$$
+
+A small variation therefore has the form
+
+$$
+q_\epsilon(\eta)=q(\eta)+\epsilon h(\eta),
+\qquad \int h(\eta)\,d\eta=0,
+$$
+
+with $\epsilon$ and $h$ also chosen to preserve non-negativity. We can redistribute probability, but we cannot create or destroy its total mass.
+
+## 5. What exactly is being varied?
+
+The distinction is subtle but essential:
+
+$$
+\underbrace{\eta}_{\text{possible temperature}}
+\qquad\text{versus}\qquad
+\underbrace{q(\eta)}_{\text{density over possible temperatures}}.
+$$
+
+When we integrate over $\eta$, we scan the possible temperatures within *one* distribution. When we vary $q$, we change how probability is allocated across those temperatures.
+
+For example, changing from a broad distribution near $22^\circ\mathrm C$ to a narrow distribution near $18^\circ\mathrm C$ changes both an estimate and its uncertainty. It does not itself cool the room.
+
+::: {.callout-tip}
+## Pause and check
+
+If the room stays at the same temperature while the controller becomes more certain about it, what changes?
+
+The physical temperature $\eta$ can stay fixed while the density $q(\eta)$ becomes narrower. Inference changes a representation of the world.
+:::
+
+## 6. In practice, choose a family of distributions
+
+Optimizing over every conceivable density is usually impractical. Instead, choose a family $\mathcal Q$.
+
+For example,
+
+$$
+q_\theta(\eta)=\mathcal N(\eta;m,v),
+\qquad \theta=(m,v),\quad v>0.
+$$
+
+We use $m$ for the mean and $v$ for the **variance**, so the standard deviation is $\sqrt v$. Each pair $(m,v)$ specifies an entire Gaussian density.
+
+Changing $m$ slides the curve. Changing $v$ changes its width. A computer can therefore optimize a two-dimensional parameter vector rather than an unrestricted function.
+
+$$
+\min_{q\in\mathcal Q}F[q]
+\quad\longleftrightarrow\quad
+\min_{m,\,v>0}F[q_{m,v}].
+$$
+
+This remains variational inference: the parameters select the candidate density. Ordinary parameter optimization is how we implement the variational problem.
+
+The choice of family matters. A single Gaussian cannot exactly represent a posterior with two separated peaks. Even perfect optimization cannot remove that limitation. This family-based approach is central to the account in [Blei, Kucukelbir, and McAuliffe's review](https://arxiv.org/abs/1601.00670).
+
+## 7. Connect the parameters to internal states
+
+In Free Energy Principle literature, you will often encounter
+
+$$
+q_\mu(\eta),
+$$
+
+where $\mu$ denotes internal states that parameterize a density over external states $\eta$.
+
+Here $\mu$ need not be a scalar mean. It can be a vector whose components specify several distribution parameters, possibly through a nonlinear mapping $\theta=\theta(\mu)$.
+
+For example, a model could use two internal coordinates:
+
+$$
+\mu=(\mu_1,\mu_2),
+\qquad m=\mu_1,
+\qquad v=e^{\mu_2}.
+$$
+
+The exponential ensures positive variance. A physical change in $\mu$ then corresponds, under this specified mapping, to a change in the candidate distribution.
+
+::: {.callout-note}
+## A mathematical representation needs justification
+
+Writing $q_\mu$ defines a way to represent distributions using internal states. It does not by itself prove that an arbitrary thermostat performs Bayesian inference. To make that claim, we must also justify the representation and its relation to the system's dynamics. Neither the notation nor the existence of a Markov blanket alone establishes posterior matching.
+:::
+
+## 8. Give the candidate a score: KL divergence
+
+We need a measure of how well $q$ approximates the posterior. A standard choice is
+
+$$
+D_{\mathrm{KL}}\!\left(q\,\Vert\,p(\cdot\mid s)\right)
+=\int q(\eta)\ln\frac{q(\eta)}{p(\eta\mid s)}\,d\eta.
+$$
+
+This is an average log density ratio, with the averaging performed under $q$. It satisfies
+
+$$
+D_{\mathrm{KL}}\geq 0,
+$$
+
+with equality precisely when the two distributions agree almost everywhere. “Almost everywhere” permits differences on sets of zero measure, which do not change probabilities.
+
+KL divergence is not a geometric distance: it is generally asymmetric. The direction used here, $D_{\mathrm{KL}}(q\Vert p)$, matters.
+
+We would therefore like to solve
+
+$$
+q^*=\arg\min_{q\in\mathcal Q}
+D_{\mathrm{KL}}\!\left(q\Vert p(\cdot\mid s)\right).
+$$
+
+Assume throughout that $p(s)>0$ and that the relevant integrals are finite. If $q$ assigns positive probability where the posterior is zero, this KL divergence is infinite.
+
+## 9. Remove the difficult posterior normalization
+
+There is an apparent obstacle: our score contains the posterior we were trying to avoid computing.
+
+Use Bayes' rule inside the logarithm:
+
+$$
+\ln p(\eta\mid s)=\ln p(s,\eta)-\ln p(s).
+$$
+
+Substituting gives
+
+$$
+\begin{aligned}
+D_{\mathrm{KL}}\!\left(q\Vert p(\cdot\mid s)\right)
+&=\int q(\eta)
+\left[\ln q(\eta)-\ln p(s,\eta)+\ln p(s)\right]d\eta\\
+&=\int q(\eta)\left[\ln q(\eta)-\ln p(s,\eta)\right]d\eta
++\ln p(s)\underbrace{\int q(\eta)d\eta}_{1}.
+\end{aligned}
+$$
+
+Define **variational free energy** by
+
+$$
+\boxed{
+F[q;s]=\int q(\eta)\left[\ln q(\eta)-\ln p(s,\eta)\right]d\eta.
+}
+$$ {#eq-vfe-definition}
+
+The semicolon emphasizes that $s$ is held fixed while $q$ varies. We will sometimes abbreviate this as $F[q]$.
+
+Using expectation notation, the same definition is
+
+$$
+F[q;s]=\mathbb E_q\!\left[\ln q(\eta)-\ln p(s,\eta)\right].
+$$
+
+We have removed the posterior's evidence denominator from the objective. Evaluating or estimating expectations under $q$ may still require work; the transformation does not make every inference problem easy.
+
+## 10. Understand the key identity
+
+Rearranging the previous calculation yields
+
+$$
+\boxed{
+F[q;s]
+=\underbrace{D_{\mathrm{KL}}\!\left(q\Vert p(\cdot\mid s)\right)}_{\text{approximation gap}}
++\underbrace{[-\ln p(s)]}_{\text{surprisal of the fixed observation}}.
+}
+$$ {#eq-vfe-identity}
+
+For fixed $s$ and a fixed model, $-\ln p(s)$ is a constant with respect to $q$. Therefore
+
+$$
+\arg\min_{q\in\mathcal Q}F[q;s]
+=\arg\min_{q\in\mathcal Q}D_{\mathrm{KL}}\!\left(q\Vert p(\cdot\mid s)\right).
+$$
+
+This is the payoff: **we can optimize an objective built from the joint model and our candidate density, and thereby improve the posterior approximation.**
+
+Non-negativity of KL also gives
+
+$$
+F[q;s]\geq-\ln p(s).
+$$
+
+Free energy is an **upper bound** on surprisal. The gap closes when $q$ equals the posterior. If $\mathcal Q$ excludes the posterior, even its best member leaves a positive gap. A numerical optimizer can also stop short of the best member.
+
+Machine-learning texts often maximize the **evidence lower bound**, or ELBO:
+
+$$
+\operatorname{ELBO}[q;s]=-F[q;s]\leq\ln p(s).
+$$
+
+These are the same optimization with opposite signs.
+
+::: {.callout-important}
+## What does inference improve?
+
+During this optimization, the observation and model are fixed. Improving $q$ decreases the approximation gap; it does **not** increase $p(s)$ or make the recorded observation less surprising. Model learning and action can change other quantities, but they are different optimization problems.
+:::
+
+::: {.callout-note collapse="true"}
+## A note on continuous densities and units
+
+We use natural logarithms, giving information quantities in nats. For continuous temperatures, $p(s)$ is a density, not the probability of one exact real number. Density-based surprisal depends on the measurement coordinates and can be negative. Throughout, we use fixed coordinates and reference measures—temperature expressed numerically in degrees Celsius in the example. KL divergence between distributions is invariant under a common invertible coordinate transformation.
+:::
+
+## 11. Why call it “free energy”?
+
+Introduce the entropy of $q$:
+
+$$
+H[q]=-\mathbb E_q[\ln q(\eta)].
+$$
+
+For a continuous density this is *differential entropy*. Our definition becomes
+
+$$
+F[q;s]=\underbrace{\mathbb E_q[-\ln p(s,\eta)]}_{\text{expected energy-like quantity}}-H[q].
+$$
+
+This resembles the Helmholtz free energy of thermodynamics,
+
+$$
+A=U-TS.
+$$
+
+We can make the correspondence explicit for a canonical ensemble. Suppose physical microstates $\eta$ have energy $E(\eta)$ and equilibrium density
+
+$$
+p_{\mathrm{eq}}(\eta)=\frac{e^{-\beta E(\eta)}}{Z},
+\qquad\beta=\frac{1}{k_B T}.
+$$
+
+For an admissible trial density $q$, define
+
+$$
+\mathcal A[q]=\mathbb E_q[E]-T k_B H[q].
+$$
+
+Substituting $\ln p_{\mathrm{eq}}=-\beta E-\ln Z$ into KL divergence gives
+
+$$
+\begin{aligned}
+k_B T D_{\mathrm{KL}}(q\Vert p_{\mathrm{eq}})
+&=\mathbb E_q[E]-k_B T H[q]+k_B T\ln Z\\
+&=\mathcal A[q]-A_{\mathrm{eq}},
+\end{aligned}
+$$
+
+where $A_{\mathrm{eq}}=-k_B T\ln Z$. Thus the equilibrium density minimizes this thermodynamic free-energy functional, just as the posterior minimizes variational free energy.
+
+The shared mathematical structure explains the terminology. However, $-\ln p(s,\eta)$ in an inference model is generally not a physical Hamiltonian. **Variational free energy is not automatically an amount of energy in joules stored in a brain or controller.**
+
+## 12. Why specifically *variational* free energy?
+
+We can now unpack the name precisely:
+
+| Term | Meaning |
+|---|---|
+| Variational density $q$ | The adjustable probability distribution |
+| Variational free energy $F[q;s]$ | The functional used to score it |
+| Variational inference | Optimizing that functional over an allowed family |
+
+A second decomposition is useful in Active Inference. Factor $p(s,\eta)=p(s\mid\eta)p(\eta)$ in @eq-vfe-definition:
+
+$$
+\begin{aligned}
+F[q;s]
+&=\mathbb E_q[\ln q(\eta)-\ln p(\eta)-\ln p(s\mid\eta)]\\
+&=\underbrace{D_{\mathrm{KL}}(q\Vert p(\eta))}_{\text{complexity}}
+-\underbrace{\mathbb E_q[\ln p(s\mid\eta)]}_{\text{accuracy}}.
+\end{aligned}
+$$
+
+Accuracy rewards candidate states that explain the observation. Complexity measures departure from the **prior**, not necessarily from the previous time step's belief. These terms jointly produce posterior inference; the complexity term is not an arbitrary prohibition on changing one's mind.
+
+## 13. Work through the thermometer numerically
+
+Let temperatures be represented by their numerical values in degrees Celsius. Choose
+
+$$
+p(\eta)=\mathcal N(\eta;m_0,v_0),
+\qquad m_0=22,\quad v_0=4,
+$$
+
+and a sensor model
+
+$$
+p(s\mid\eta)=\mathcal N(s;\eta,r),
+\qquad r=1,\quad s=17.
+$$
+
+The prior standard deviation is $2^\circ\mathrm C$ and the sensor-noise standard deviation is $1^\circ\mathrm C$. The variances have units of squared degrees Celsius.
+
+Choose the variational family
+
+$$
+q(\eta)=\mathcal N(\eta;m,v).
+$$
+
+### First compute the objective
+
+For a Gaussian, $H[q]=\tfrac12\ln(2\pi e v)$. Also,
+
+$$
+\mathbb E_q[(s-\eta)^2]=(s-m)^2+v,
+$$
+
+because the expected squared deviation includes both the squared displacement of the mean and the variance. Similarly,
+
+$$
+\mathbb E_q[(\eta-m_0)^2]=(m-m_0)^2+v.
+$$
+
+Substitution into the free-energy definition gives
+
+$$
+\boxed{
+\begin{aligned}
+F(m,v;s)={}&\frac12\ln(2\pi r)
++\frac{(s-m)^2+v}{2r}\\
+&+\frac12\ln(2\pi v_0)
++\frac{(m-m_0)^2+v}{2v_0}\\
+&-\frac12\ln(2\pi e v).
+\end{aligned}
+}
+$$ {#eq-vfe-gaussian}
+
+The first line comes from the likelihood, the second from the prior, and the last from negative entropy. Keeping the constants lets us check the absolute free-energy bound, not only its gradients.
+
+### Then vary the mean and variance
+
+Differentiate with respect to $m$:
+
+$$
+\frac{\partial F}{\partial m}
+=\frac{m-s}{r}+\frac{m-m_0}{v_0}=0.
+$$
+
+Solving gives
+
+$$
+m^*=\frac{s/r+m_0/v_0}{1/r+1/v_0}=18.
+$$
+
+This is a **precision-weighted average**: precision is inverse variance. The more precise sensor receives greater weight than the prior.
+
+For the variance,
+
+$$
+\frac{\partial F}{\partial v}
+=\frac{1}{2r}+\frac{1}{2v_0}-\frac{1}{2v}=0,
+$$
+
+so
+
+$$
+v^*=\left(\frac1r+\frac1{v_0}\right)^{-1}=0.8.
+$$
+
+The second derivatives are positive, and there is no mixed derivative:
+
+$$
+\frac{\partial^2F}{\partial m^2}=\frac1r+\frac1{v_0}>0,
+\qquad
+\frac{\partial^2F}{\partial v^2}=\frac{1}{2v^2}>0.
+$$
+
+These stationary values give the unique minimum for $v>0$.
+
+The posterior of this Gaussian model is exactly
+
+$$
+p(\eta\mid s)=\mathcal N(\eta;18,0.8).
+$$
+
+Because our family contains it, the optimum reaches the posterior. Notice that the answer is centered at **18**, not at the sensor reading **17**: inference combines prior information with the observation.
+
+### Watch the approximation improve
+
+The evidence is $p(s)=\mathcal N(s;m_0,v_0+r)$, giving
+
+$$
+-\ln p(s)=\frac12\ln(2\pi\cdot5)+\frac{(17-22)^2}{2\cdot5}
+\approx4.224.
+$$
+
+The following candidates illustrate simultaneous changes in mean and uncertainty. They are illustrative choices, not the output of a specified learning algorithm.
+
+| Candidate | Mean $m$ | Variance $v$ | $F[q;s]$ | Posterior KL gap |
+|---|---:|---:|---:|---:|
+| Initial, equal to prior | 22 | 4 | 15.419 | 11.195 |
+| Intermediate | 20 | 2 | 7.016 | 2.792 |
+| Near posterior | 18.5 | 1 | 4.393 | 0.170 |
+| Exact posterior | 18 | 0.8 | 4.224 | 0 |
+
+Every row satisfies $F=-\ln p(s)+D_{\mathrm{KL}}$. The evidence is fixed throughout.
+
+```{python}
+#| label: fig-varying-density
+#| fig-cap: "Left: varying the mean and variance changes the entire candidate density. Right: on the slice v = 0.8, free energy falls to the fixed surprisal bound at m = 18. The vertical gap above the bound is posterior KL divergence."
+#| fig-alt: "Four Gaussian densities approach the posterior at temperature 18 degrees Celsius. A second panel shows a parabola of free energy versus candidate mean, touching the surprisal bound at mean 18."
+#| fig-width: 11
+#| fig-height: 4.3
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+prior_mean, prior_var = 22.0, 4.0
+observation, noise_var = 17.0, 1.0
+posterior_var = 1.0 / (1.0 / noise_var + 1.0 / prior_var)
+posterior_mean = posterior_var * (
+    observation / noise_var + prior_mean / prior_var
+)
+
+def normal_pdf(x, mean, variance):
+    """Evaluate a normalized Gaussian density with the given variance."""
+    return np.exp(-0.5 * (x - mean)**2 / variance) / np.sqrt(
+        2.0 * np.pi * variance
+    )
+
+def free_energy(mean, variance):
+    """Evaluate the full Gaussian variational objective for fixed data."""
+    likelihood_term = 0.5 * np.log(2.0 * np.pi * noise_var)
+    likelihood_term += ((observation - mean)**2 + variance) / (2 * noise_var)
+    prior_term = 0.5 * np.log(2.0 * np.pi * prior_var)
+    prior_term += ((mean - prior_mean)**2 + variance) / (2 * prior_var)
+    entropy = 0.5 * np.log(2.0 * np.pi * np.e * variance)
+    return likelihood_term + prior_term - entropy
+
+surprisal = 0.5 * np.log(2 * np.pi * (prior_var + noise_var))
+surprisal += (observation - prior_mean)**2 / (2 * (prior_var + noise_var))
+
+temperatures = np.linspace(12, 29, 700)
+candidates = [(22, 4), (20, 2), (18.5, 1), (posterior_mean, posterior_var)]
+colors = ["#9b4f00", "#6d55a3", "#2879a8", "#087f5b"]
+styles = ["--", "-.", ":", "-"]
+
+fig, axes = plt.subplots(1, 2, figsize=(11, 4.3), constrained_layout=True)
+for (mean, variance), color, style in zip(candidates, colors, styles):
+    axes[0].plot(
+        temperatures, normal_pdf(temperatures, mean, variance),
+        color=color, linestyle=style, linewidth=2.2,
+        label=f"m = {mean:g}, v = {variance:g}",
+    )
+axes[0].axvline(observation, color="0.5", linestyle=":", linewidth=1)
+axes[0].set(xlabel="Possible temperature η (°C)", ylabel="Density (1/°C)",
+            title="Changing a whole distribution")
+axes[0].legend(frameon=False, fontsize=9)
+
+means = np.linspace(14, 23, 400)
+axes[1].plot(means, free_energy(means, posterior_var), color="#2879a8",
+             linewidth=2.5, label="F(m, v = 0.8)")
+axes[1].axhline(surprisal, color="#087f5b", linestyle="--",
+                label="Fixed bound: −ln p(s)")
+axes[1].scatter([posterior_mean], [surprisal], color="#087f5b", zorder=3)
+axes[1].set(xlabel="Candidate mean m (°C)", ylabel="Free energy (nats)",
+            title="A slice through the objective")
+axes[1].legend(frameon=False, fontsize=9)
+for ax in axes:
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.grid(alpha=0.15)
+plt.show()
+```
+
+### What if the family is too restricted?
+
+Suppose we fix $v=4$ and vary only the mean. The best mean is still $18$, but $q=\mathcal N(18,4)$ remains too broad. Its residual KL divergence is
+
+$$
+\frac12\left[\frac{4}{0.8}-1-\ln\frac{4}{0.8}\right]
+\approx1.195\ \text{nats}.
+$$
+
+Matching the posterior mean is not the same as matching the posterior distribution.
+
+## 14. Make the word “variation” tangible
+
+Imagine a flexible sheet whose shape represents a density. You adjust the sheet and evaluate a score. If the score falls, the new shape is a better candidate.
+
+Unlike an unconstrained rubber sheet, this one must stay nonnegative and enclose unit area. Its permitted shapes depend on your family $\mathcal Q$. A Gaussian family permits shifting and stretching a single bell-shaped curve.
+
+The analogy identifies three separate ingredients: a deformable object $q$, admissible deformations, and a scalar score $F[q;s]$. The following optional calculation turns that picture into calculus.
+
+::: {.callout-note collapse="true"}
+## Optional: minimize over the full density
+
+Instead of assuming Gaussian form, minimize $F[q;s]$ over normalized densities on the posterior support. Introduce a Lagrange multiplier $\lambda$ for normalization:
+
+$$
+\mathcal J[q]=F[q;s]+\lambda\left(\int q(\eta)d\eta-1\right).
+$$
+
+Perturb $q$ to $q+\epsilon h$. Since $d(q\ln q)/dq=\ln q+1$, the first variation is
+
+$$
+\left.\frac{d\mathcal J[q+\epsilon h]}{d\epsilon}\right|_{\epsilon=0}
+=\int h(\eta)\left[\ln q(\eta)+1-\ln p(s,\eta)+\lambda\right]d\eta.
+$$
+
+For this to vanish for arbitrary admissible perturbations in the interior of the support, the bracket must vanish:
+
+$$
+\frac{\delta\mathcal J}{\delta q(\eta)}
+=\ln q(\eta)+1-\ln p(s,\eta)+\lambda=0.
+$$
+
+The expression $\delta\mathcal J/\delta q(\eta)$ is the **functional derivative**. It describes sensitivity to changing the density at each location $\eta$.
+
+Rearranging,
+
+$$
+q^*(\eta)=e^{-1-\lambda}p(s,\eta).
+$$
+
+Normalization requires
+
+$$
+1=e^{-1-\lambda}\int p(s,\eta)d\eta
+=e^{-1-\lambda}p(s).
+$$
+
+Therefore
+
+$$
+q^*(\eta)=\frac{p(s,\eta)}{p(s)}=p(\eta\mid s).
+$$
+
+We have recovered Bayes' rule by varying a density. The KL identity establishes that this stationary density is a global minimum. This derivation identifies the mathematical optimum; it does not supply a general way to compute the evidence integral.
+:::
+
+## 15. Return to the Free Energy Principle
+
+Read the notation $q_\mu(\eta)$ as:
+
+> An adjustable candidate distribution over external states, parameterized by internal states.
+
+For a designed inference algorithm, one possible update is gradient descent:
+
+$$
+\dot\mu=-\kappa\nabla_\mu F[q_\mu;s],
+\qquad\kappa>0.
+$$
+
+If $s$ and the model stay fixed, this gives
+
+$$
+\frac{dF}{dt}
+=\nabla_\mu F\cdot\dot\mu
+=-\kappa\|\nabla_\mu F\|^2\leq0.
+$$
+
+That is a concrete example of internal-state dynamics implementing variational optimization. In our Gaussian example, descending in the mean uses
+
+$$
+\dot m=-\kappa\left[\frac{m-s}{r}+\frac{m-m_0}{v_0}\right].
+$$
+
+The two precision-weighted discrepancies pull the estimate toward the observation and the prior mean.
+
+This deliberately simple descent equation is not a general theorem about every physical system. Stochastic dynamics, changing sensory inputs, and solenoidal flow require additional treatment. In [Friston and colleagues' account](https://arxiv.org/abs/2201.06387), relating physical dynamics to Bayesian descriptions is a further argument built on assumptions about the system and its partition.
+
+For orientation, that paper also uses particular states $\pi=(s,a,\mu)$. The corresponding free-energy identity can be written
+
+$$
+F[q_\mu;\pi]=D_{\mathrm{KL}}\!\left(q_\mu(\eta)\Vert p(\eta\mid\pi)\right)-\ln p(\pi).
+$$
+
+The algebra has the same form, but $\mu$ now appears both in the density parameters and in $\pi$. Our fixed-observation calculation does not by itself establish the paper's claims about gradients of physical states. In particular, exact identities involving a specially constructed density and conditional modes should not be read as saying that every candidate $q_\mu$ equals the posterior.
+
+Finally, distinguish **inference** from **action**. Updating $q$ revises the temperature estimate. Turning on a heater changes the environment and subsequent observations. To model the latter, we need a model of how actions affect observations and how preferred outcomes or viable states enter the controller's model. An inference prior centered at $22^\circ\mathrm C$ alone is not a complete heating policy.
+
+Variational free energy is also distinct from **expected free energy**, an objective used in many Active Inference models to evaluate possible future policies. Understanding the present chapter provides the foundation for that later topic.
+
+## 16. Keep three different objects separate
+
+| Symbol | Meaning | Thermometer example |
+|---|---|---|
+| $\eta$ | The hidden state itself | Actual room temperature |
+| $p(\eta\mid s)$ | Exact posterior under the chosen model | Distribution implied by prior, sensor model, and reading |
+| $q_\mu(\eta)$ | Candidate distribution | Distribution represented by adjustable internal parameters |
+
+“Exact posterior” means exact **under the model**. It does not guarantee that the model correctly describes the real sensor or room.
+
+The central optimization is
+
+$$
+\boxed{
+\mu^*=\arg\min_\mu F[q_\mu;s].
+}
+$$
+
+Varying $\mu$ varies a distribution. At a global optimum, we obtain the member of the allowed family with the smallest posterior KL divergence. If the family contains the posterior, that divergence can reach zero.
+
+::: {.callout-tip}
+## Explain it in one sentence
+
+**Variational inference turns posterior estimation into optimization over probability distributions; variational free energy is the objective whose excess above surprisal measures the remaining posterior mismatch.**
+:::
+
+## Check your understanding {.unnumbered}
+
+1. In $F[q;s]$, which object is varied and which observation is held fixed?
+2. Why can free energy fall while $p(s)$ stays unchanged?
+3. In the Gaussian example, why is the posterior mean $18$ rather than $17$?
+4. If the mean is correct but the variance is too large, is inference exact?
+5. Does $\delta S=0$ always mean that the action is minimized?
+6. If we allow an arbitrary normalized density, what density minimizes $F$?
+
+::: {.callout-note collapse="true"}
+## Suggested answers
+
+1. We vary $q$, or the parameters selecting it. We hold $s$ and the generative model fixed.
+2. The posterior KL gap falls; the surprisal term is constant.
+3. The estimate combines the prior mean $22$ and reading $17$, weighted by their precisions.
+4. No. Exact inference matches the full posterior distribution, including its uncertainty.
+5. No. It expresses stationarity of the action.
+6. The posterior $p(\eta\mid s)$, subject to the support and regularity conditions discussed above.
+:::
+
+## Further reading {.unnumbered}
+
+- David M. Blei, Alp Kucukelbir, and Jon D. McAuliffe (2017), [*Variational Inference: A Review for Statisticians*](https://arxiv.org/abs/1601.00670). A systematic introduction to variational families, KL minimization, and the ELBO.
+- Karl Friston, Lancelot Da Costa, Noor Sajid, Conor Heins, Kai Ueltzhöffer, Grigorios A. Pavliotis, and Thomas Parr (2023), [*The free energy principle made simpler but not too simple*](https://arxiv.org/abs/2201.06387). The connection to random dynamical systems and the Bayesian interpretation of internal states; the preprint first appeared in 2022.
