@@ -360,16 +360,6 @@
     ]
   },
   {
-    "objectID": "chapters/equation-11-markov-blankets.html#sources-and-quarto-setup",
-    "href": "chapters/equation-11-markov-blankets.html#sources-and-quarto-setup",
-    "title": "3  From sparse dynamics to Markov blankets",
-    "section": "3.18 Sources and Quarto setup",
-    "text": "3.18 Sources and Quarto setup\nMathematical source: Friston, K., Da Costa, L., Sajid, N., Heins, C., Ueltzhöffer, K., Pavliotis, G. A., and Parr, T. (2023). The free energy principle made simpler but not too simple. Physics Reports, 1024, 1–29. DOI. Section 4, Equations (7)–(13), especially the definition in (9), footnote 10, and the partition construction preceding (11). Checked against the uploaded PDF.\nConceptual source: Clark, A. (2017). How to Knit Your Own Markov Blanket: Resisting the Second Law with Metamorphic Minds. Uploaded EPUB, authored content OEBPS/03_Clark.xhtml. Citations in this notebook use its numbered sections and footnotes because EPUB page numbers vary by reader. Relevant locations: Section 1 and footnote 2 (screening, prediction, blanket/boundary); Section 2 and footnotes 6–9 (FEP versus predictive processing); Sections 3–4 (embodiment and extension); Sections 5–6 (metamorphosis, malleability, process); Section 8 (conclusion). Clark’s views are paraphrased and attributed; no chapter text or illustrations are reproduced.\nTeaching source: the supplied Pasted markdown(5).md. This notebook retains its explanatory sequence while adding the converse proof, numerical illustrations, source connections, and qualifications on sparse coupling and support. Clark’s discussion predates the 2023 paper; the connections drawn here are pedagogical comparisons, not claims that Clark comments on Equation (11).\nSave this notebook as chapters/equation-11-markov-blankets.ipynb in your book. Add this entry to your existing book.chapters list in _quarto.yml:\n- chapters/equation-11-markov-blankets.ipynb\nThe raw first cell contains Quarto metadata. All computations are self-contained and outputs are embedded. To recompute, install numpy scipy matplotlib in your Jupyter environment and run the code cells in order, then save. From the book root, use quarto preview, or explicitly recompute with:\nquarto render chapters/equation-11-markov-blankets.ipynb --execute\nSee Quarto’s JupyterLab guide. The source EPUB and PDF are cited reading materials and are not runtime dependencies.",
-    "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>From sparse dynamics to Markov blankets</span>"
-    ]
-  },
-  {
     "objectID": "summary.html",
     "href": "summary.html",
     "title": "4  Summary",

@@ -254,7 +254,6 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#answers" id="toc-answers" class="nav-link" data-scroll-target="#answers"><span class="header-section-number">3.17.1</span> Answers</a></li>
   </ul></li>
-  <li><a href="#sources-and-quarto-setup" id="toc-sources-and-quarto-setup" class="nav-link" data-scroll-target="#sources-and-quarto-setup"><span class="header-section-number">3.18</span> Sources and Quarto setup</a></li>
   </ul>
 </nav>
     </div>
@@ -720,20 +719,9 @@ They cancel, giving J_12 = 0 despite H_12 != 0.</code></pre>
 <li>No.&nbsp;Clark argues that cognition need not have a uniquely fixed biological boundary. A proposed extended system still requires a defensible model and evidence for its statistical and functional organization.</li>
 </ol>
 <p>The sentence to remember is: <strong>Under the paper’s special sparse-coupling assumptions, absent direct influences imply zero mixed curvature of steady-state surprisal; those zeros express the conditional independencies defining the partition.</strong></p>
-</section>
-</section>
-<section id="sources-and-quarto-setup" class="level2" data-number="3.18">
-<h2 data-number="3.18" class="anchored" data-anchor-id="sources-and-quarto-setup"><span class="header-section-number">3.18</span> Sources and Quarto setup</h2>
-<p><strong>Mathematical source:</strong> Friston, K., Da Costa, L., Sajid, N., Heins, C., Ueltzhöffer, K., Pavliotis, G. A., and Parr, T. (2023). <em>The free energy principle made simpler but not too simple</em>. Physics Reports, 1024, 1–29. <a href="https://doi.org/10.1016/j.physrep.2023.07.001">DOI</a>. Section 4, Equations (7)–(13), especially the definition in (9), footnote 10, and the partition construction preceding (11). Checked against the uploaded PDF.</p>
-<p><strong>Conceptual source:</strong> Clark, A. (2017). <em>How to Knit Your Own Markov Blanket: Resisting the Second Law with Metamorphic Minds</em>. Uploaded EPUB, authored content <code>OEBPS/03_Clark.xhtml</code>. Citations in this notebook use its numbered sections and footnotes because EPUB page numbers vary by reader. Relevant locations: Section 1 and footnote 2 (screening, prediction, blanket/boundary); Section 2 and footnotes 6–9 (FEP versus predictive processing); Sections 3–4 (embodiment and extension); Sections 5–6 (metamorphosis, malleability, process); Section 8 (conclusion). Clark’s views are paraphrased and attributed; no chapter text or illustrations are reproduced.</p>
-<p><strong>Teaching source:</strong> the supplied <code>Pasted markdown(5).md</code>. This notebook retains its explanatory sequence while adding the converse proof, numerical illustrations, source connections, and qualifications on sparse coupling and support. Clark’s discussion predates the 2023 paper; the connections drawn here are pedagogical comparisons, not claims that Clark comments on Equation (11).</p>
-<p>Save this notebook as <code>chapters/equation-11-markov-blankets.ipynb</code> in your book. Add this entry to your existing <code>book.chapters</code> list in <code>_quarto.yml</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> chapters/equation-11-markov-blankets.ipynb</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The raw first cell contains Quarto metadata. All computations are self-contained and outputs are embedded. To recompute, install <code>numpy scipy matplotlib</code> in your Jupyter environment and run the code cells in order, then save. From the book root, use <code>quarto preview</code>, or explicitly recompute with:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render chapters/equation-11-markov-blankets.ipynb <span class="at">--execute</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>See <a href="https://quarto.org/docs/tools/jupyter-lab.html">Quarto’s JupyterLab guide</a>. The source EPUB and PDF are cited reading materials and are not runtime dependencies.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
